@@ -565,8 +565,11 @@
 
         /* ===== GAME SCREEN ===== */
         #gameScreen {
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
         }
         #gameScreen.active {
             display: flex;
@@ -577,11 +580,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             gap: clamp(3px, 0.8vh, 8px);
-            padding: clamp(6px, 1.2vh, 12px) 1rem clamp(6px, 1.2vh, 12px);
-            flex: 0 1 auto;
-            min-height: 0;
+            padding: clamp(6px, 1.2vh, 12px) 1rem clamp(16px, 3vh, 24px) 1rem;
+            flex: 0 0 auto;
+            min-height: auto;
             overflow: visible;
         }
         .game-header {
@@ -596,7 +599,7 @@
             width: 100%;
             max-width: 560px;
             height: auto;
-            max-height: 24vh;
+            max-height: 20vh;
             border-radius: 12px;
             object-fit: contain;
             filter: drop-shadow(0 6px 22px rgba(0, 0, 0, 0.55));
@@ -624,6 +627,7 @@
             gap: 6px;
             margin: 1px 0;
             flex-shrink: 0;
+            flex-wrap: wrap;
         }
         .info-item {
             background: rgba(22, 10, 14, 0.6);
@@ -646,6 +650,11 @@
             font-weight: 700;
             color: #fff;
         }
+        .info-item.top-scorer-highlight {
+            border-color: var(--gold-accent);
+            box-shadow: 0 0 16px rgba(196, 154, 92, 0.5);
+            background: rgba(30, 15, 10, 0.7);
+        }
 
         .grid-frame {
             background: rgba(22, 10, 14, 0.5);
@@ -662,6 +671,7 @@
             flex-direction: column;
             justify-content: center;
             min-height: 0;
+            position: relative;
         }
         .card-grid {
             display: grid;
@@ -823,6 +833,238 @@
             }
         }
 
+        /* ===== TOP 10 BUTTON ===== */
+        .top10-toggle-btn {
+            font-family: 'Fredoka One', cursive;
+            padding: 6px 16px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 28px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            background: rgba(199, 58, 70, 0.25);
+            border: 1.5px solid var(--apple-red-soft);
+            color: #fff;
+            flex-shrink: 0;
+            transition: 0.3s;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+            letter-spacing: 0.05em;
+        }
+        .top10-toggle-btn:hover {
+            background: rgba(199, 58, 70, 0.45);
+            box-shadow: 0 0 20px rgba(199, 58, 70, 0.5);
+        }
+        .top10-toggle-btn.active-leader {
+            background: var(--apple-red-muted);
+            box-shadow: 0 0 24px rgba(199, 58, 70, 0.6);
+        }
+
+        /* ===== LEADERBOARD PANEL ===== */
+        .leaderboard-panel {
+            width: 100%;
+            max-width: var(--grid-max-w);
+            background: rgba(18, 8, 11, 0.85);
+            backdrop-filter: blur(14px);
+            border-radius: 18px;
+            border: 1.5px solid rgba(199, 58, 70, 0.35);
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6), 0 0 40px rgba(199, 58, 70, 0.2);
+            overflow: hidden;
+            flex-shrink: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.3, 0.64, 1);
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0;
+            pointer-events: none;
+        }
+        .leaderboard-panel.open {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 4px;
+            pointer-events: auto;
+        }
+        .leaderboard-header {
+            padding: 0.6rem 1rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(199, 58, 70, 0.3);
+            background: linear-gradient(180deg, rgba(199, 58, 70, 0.2), transparent);
+        }
+        .leaderboard-header h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 0.06em;
+            text-shadow: 0 0 14px rgba(255, 255, 255, 0.4);
+        }
+        .leaderboard-list {
+            list-style: none;
+            padding: 0.4rem 0.6rem;
+            max-height: 280px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .leaderboard-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.45rem 0.6rem;
+            border-radius: 12px;
+            margin-bottom: 3px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: 0.3s;
+            font-size: 0.8rem;
+            color: #fff;
+        }
+        .leaderboard-list li.top-1 {
+            background: rgba(196, 154, 92, 0.18);
+            border-color: rgba(196, 154, 92, 0.5);
+            box-shadow: 0 0 14px rgba(196, 154, 92, 0.25);
+        }
+        .leaderboard-list li.top-2 {
+            background: rgba(180, 180, 190, 0.14);
+            border-color: rgba(180, 180, 190, 0.4);
+        }
+        .leaderboard-list li.top-3 {
+            background: rgba(160, 100, 60, 0.14);
+            border-color: rgba(160, 100, 60, 0.4);
+        }
+        .leader-rank {
+            font-weight: 700;
+            font-size: 0.9rem;
+            min-width: 28px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .leader-rank.r1 {
+            color: #f5c842;
+            font-size: 1.1rem;
+        }
+        .leader-rank.r2 {
+            color: #c0c0c0;
+            font-size: 1rem;
+        }
+        .leader-rank.r3 {
+            color: #cd7f32;
+            font-size: 0.95rem;
+        }
+        .leader-name {
+            flex: 1;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-primary);
+        }
+        .leader-score {
+            font-weight: 700;
+            color: var(--apple-red-soft);
+            text-shadow: 0 0 8px rgba(199, 58, 70, 0.5);
+            flex-shrink: 0;
+        }
+        .leaderboard-empty {
+            text-align: center;
+            padding: 1.2rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        /* ===== NAME INPUT MODAL ===== */
+        .name-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 60;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+        .name-modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .name-modal {
+            background: rgba(22, 10, 14, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 1.5rem 1.2rem;
+            border: 2px solid var(--apple-red-soft);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 60px rgba(199, 58, 70, 0.4);
+            text-align: center;
+            width: 90%;
+            max-width: 380px;
+            z-index: 61;
+        }
+        .name-modal h3 {
+            font-size: 1.2rem;
+            color: #fff;
+            margin-bottom: 0.3rem;
+            text-shadow: 0 0 18px rgba(255, 255, 255, 0.5);
+        }
+        .name-modal .final-score {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gold-accent);
+            text-shadow: 0 0 20px rgba(196, 154, 92, 0.6);
+            margin-bottom: 0.8rem;
+        }
+        .name-modal input {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border-radius: 28px;
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1rem;
+            text-align: center;
+            outline: none;
+            margin-bottom: 0.8rem;
+            transition: 0.3s;
+        }
+        .name-modal input:focus {
+            border-color: var(--apple-red-soft);
+            box-shadow: 0 0 20px rgba(199, 58, 70, 0.4);
+        }
+        .name-modal input::placeholder {
+            color: rgba(255, 255, 255, 0.35);
+        }
+        .name-modal .modal-btn-row {
+            display: flex;
+            gap: 0.6rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .name-modal .modal-btn {
+            font-family: 'Fredoka One', cursive;
+            padding: 0.5rem 1.4rem;
+            border-radius: 28px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: none;
+            transition: 0.3s;
+            letter-spacing: 0.03em;
+        }
+        .modal-btn.save-btn {
+            background: var(--apple-red-muted);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(184, 48, 60, 0.5);
+        }
+        .modal-btn.save-btn:hover {
+            background: var(--apple-red-soft);
+        }
+        .modal-btn.skip-btn {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .modal-btn.skip-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
         .btn-back {
             font-family: 'Fredoka One', cursive;
             padding: 6px 20px;
@@ -845,7 +1087,6 @@
         }
 
         /* ===== RESPONSIVE ===== */
-
         @media (max-width: 900px) {
             #hubScreen {
                 overflow-y: auto;
@@ -857,7 +1098,7 @@
                 overflow-y: auto;
                 overflow-x: hidden;
                 -webkit-overflow-scrolling: touch;
-                justify-content: safe center;
+                justify-content: flex-start;
                 align-items: center;
             }
             .hub-wrapper {
@@ -909,17 +1150,23 @@
                 font-size: 0.85rem;
             }
             .game-banner-img {
-                max-height: 16vh;
+                max-height: 14vh;
             }
             .game-wrapper {
                 gap: clamp(2px, 0.6vh, 6px);
-                padding: clamp(4px, 1vh, 8px) 0.8rem clamp(4px, 1vh, 8px);
+                padding: clamp(4px, 1vh, 8px) 0.8rem clamp(16px, 3vh, 20px) 0.8rem;
                 flex: 0 0 auto;
                 height: auto;
-                justify-content: center;
+                justify-content: flex-start;
             }
             .win-message {
                 font-size: clamp(1.2rem, 3.8vw, 1.8rem);
+            }
+            .leaderboard-panel.open {
+                max-height: 400px;
+            }
+            .leaderboard-list {
+                max-height: 200px;
             }
         }
 
@@ -934,7 +1181,7 @@
                 overflow-y: auto;
                 overflow-x: hidden;
                 -webkit-overflow-scrolling: touch;
-                justify-content: safe center;
+                justify-content: flex-start;
                 align-items: center;
             }
             .global-logo {
@@ -1004,7 +1251,7 @@
                 font-size: 0.7rem;
             }
             .game-banner-img {
-                max-height: 12vh;
+                max-height: 10vh;
             }
             .match-instruction {
                 font-size: 0.7rem;
@@ -1041,10 +1288,10 @@
             }
             .game-wrapper {
                 gap: clamp(2px, 0.5vh, 4px);
-                padding: clamp(3px, 0.7vh, 5px) 0.5rem clamp(3px, 0.7vh, 5px);
+                padding: clamp(3px, 0.7vh, 5px) 0.5rem clamp(14px, 2.5vh, 18px) 0.5rem;
                 flex: 0 0 auto;
                 height: auto;
-                justify-content: center;
+                justify-content: flex-start;
                 max-width: 100%;
             }
             .win-message {
@@ -1061,23 +1308,53 @@
             .info-item .emoji-big {
                 font-size: 0.65rem;
             }
+            .top10-toggle-btn {
+                padding: 4px 12px;
+                font-size: 0.65rem;
+            }
+            .leaderboard-panel.open {
+                max-height: 340px;
+            }
+            .leaderboard-list {
+                max-height: 170px;
+            }
+            .leaderboard-header h3 {
+                font-size: 0.85rem;
+            }
+            .leaderboard-list li {
+                font-size: 0.7rem;
+                padding: 0.35rem 0.5rem;
+            }
+            .name-modal {
+                padding: 1.2rem 0.9rem;
+            }
+            .name-modal h3 {
+                font-size: 1rem;
+            }
+            .name-modal .final-score {
+                font-size: 1.5rem;
+            }
+            .name-modal input {
+                font-size: 0.85rem;
+                padding: 0.5rem 0.8rem;
+            }
         }
 
         @media (max-height: 700px) {
             #gameScreen {
-                justify-content: safe center;
+                justify-content: flex-start;
                 align-items: center;
                 overflow-y: auto;
             }
             .game-wrapper {
                 gap: clamp(1px, 0.5vh, 4px);
-                padding: clamp(2px, 0.6vh, 5px) 0.8rem;
+                padding: clamp(2px, 0.6vh, 5px) 0.8rem clamp(10px, 2vh, 14px) 0.8rem;
                 flex: 0 0 auto;
                 height: auto;
-                justify-content: center;
+                justify-content: flex-start;
             }
             .game-banner-img {
-                max-height: 11vh;
+                max-height: 9vh;
             }
             .match-instruction {
                 font-size: clamp(0.65rem, 2vw, 0.95rem);
@@ -1108,16 +1385,22 @@
             .card-back::after {
                 font-size: clamp(1rem, 3.5vw, 1.5rem);
             }
+            .leaderboard-panel.open {
+                max-height: 300px;
+            }
+            .leaderboard-list {
+                max-height: 140px;
+            }
         }
 
         @media (max-height: 500px) {
             #gameScreen {
-                justify-content: safe center;
+                justify-content: flex-start;
                 align-items: center;
                 overflow-y: auto;
             }
             .game-banner-img {
-                max-height: 8vh;
+                max-height: 7vh;
             }
             :root {
                 --grid-max-w: min(300px, 60vmin);
@@ -1159,13 +1442,27 @@
             }
             .game-wrapper {
                 gap: clamp(1px, 0.4vh, 2px);
-                padding: clamp(1px, 0.5vh, 3px) 0.5rem;
+                padding: clamp(1px, 0.5vh, 3px) 0.5rem clamp(8px, 1.5vh, 10px) 0.5rem;
                 flex: 0 0 auto;
                 height: auto;
-                justify-content: center;
+                justify-content: flex-start;
             }
             .win-message {
                 font-size: clamp(0.8rem, 3vw, 1.2rem);
+            }
+            .leaderboard-panel.open {
+                max-height: 220px;
+            }
+            .leaderboard-list {
+                max-height: 100px;
+            }
+            .leaderboard-header h3 {
+                font-size: 0.7rem;
+                padding: 0.3rem;
+            }
+            .top10-toggle-btn {
+                padding: 3px 10px;
+                font-size: 0.55rem;
             }
         }
     </style>
@@ -1182,6 +1479,19 @@
     <canvas id="petalCanvas"></canvas>
 
     <img class="global-logo" src="https://i.postimg.cc/3xByZMxY/gato1.png" alt="Logo" loading="eager" fetchpriority="high" id="globalLogo" />
+
+    <!-- NAME INPUT MODAL -->
+    <div class="name-modal-overlay" id="nameModalOverlay">
+        <div class="name-modal">
+            <h3>🏆 New High Score! 🏆</h3>
+            <div class="final-score" id="finalScoreDisplay">0</div>
+            <input type="text" id="playerNameInput" placeholder="Enter your name..." maxlength="16" autocomplete="off" />
+            <div class="modal-btn-row">
+                <button class="modal-btn save-btn" id="saveScoreBtn">💾 Save Score</button>
+                <button class="modal-btn skip-btn" id="skipScoreBtn">Skip</button>
+            </div>
+        </div>
+    </div>
 
     <div id="hubScreen" class="screen active">
         <div class="hub-wrapper">
@@ -1260,7 +1570,9 @@
             </div>
             <div class="info-row">
                 <div class="info-item"><span class="emoji-big">🍎</span><span class="value" id="roundDisplay">1 / 10</span></div>
-                <div class="info-item"><span class="emoji-big">👑</span><span class="value" id="topScorerDisplay">---</span></div>
+                <div class="info-item top-scorer-highlight" id="topScorerInfo">
+                    <span class="emoji-big">👑</span><span class="value" id="topScorerDisplay">---</span>
+                </div>
                 <div class="info-item"><span class="emoji-big">⭐</span><span class="value" id="scoreDisplay">0</span></div>
             </div>
             <div class="grid-frame">
@@ -1268,6 +1580,15 @@
                 <div class="win-message" id="winMessage"></div>
             </div>
             <div class="round-tracker" id="roundTracker"></div>
+            <button class="top10-toggle-btn" id="top10ToggleBtn">TOP 10 🏆</button>
+            <div class="leaderboard-panel" id="leaderboardPanel">
+                <div class="leaderboard-header">
+                    <h3>🏆 TOP 10 · APPLE CAT RAIDERS</h3>
+                </div>
+                <ul class="leaderboard-list" id="leaderboardList">
+                    <li class="leaderboard-empty">No scores yet — be the first! 🍎</li>
+                </ul>
+            </div>
             <button class="btn-back" id="backToHubBtn">← Back to Hub</button>
         </div>
     </div>
@@ -1344,6 +1665,7 @@
                     globalLogo.classList.remove('logo-hidden');
                     hubScreen.scrollTop = 0;
                     gameScreen.scrollTop = 0;
+                    closeLeaderboard();
                 }
             });
 
@@ -1409,6 +1731,7 @@
                 hubScreen.classList.remove('active');
                 gameScreen.classList.add('active');
                 globalLogo.classList.add('logo-hidden');
+                closeLeaderboard();
                 initGame();
                 hubScreen.scrollTop = 0;
                 gameScreen.scrollTop = 0;
@@ -1418,10 +1741,195 @@
                 gameScreen.classList.remove('active');
                 hubScreen.classList.add('active');
                 globalLogo.classList.remove('logo-hidden');
+                closeLeaderboard();
                 hubScreen.scrollTop = 0;
                 gameScreen.scrollTop = 0;
             });
 
+            // ===== LEADERBOARD =====
+            const STORAGE_KEY = 'apple_cat_leaderboard_v1';
+            const MAX_ENTRIES = 10;
+            const leaderboardPanel = document.getElementById('leaderboardPanel');
+            const leaderboardList = document.getElementById('leaderboardList');
+            const top10ToggleBtn = document.getElementById('top10ToggleBtn');
+            const topScorerDisplay = document.getElementById('topScorerDisplay');
+            const topScorerInfo = document.getElementById('topScorerInfo');
+            const nameModalOverlay = document.getElementById('nameModalOverlay');
+            const playerNameInput = document.getElementById('playerNameInput');
+            const finalScoreDisplay = document.getElementById('finalScoreDisplay');
+            const saveScoreBtn = document.getElementById('saveScoreBtn');
+            const skipScoreBtn = document.getElementById('skipScoreBtn');
+
+            let pendingSaveScore = 0;
+            let leaderboardOpen = false;
+
+            function getLeaderboard() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (!raw) return [];
+                    const data = JSON.parse(raw);
+                    if (!Array.isArray(data)) return [];
+                    return data.filter(e => e && typeof e.name === 'string' && typeof e.score === 'number')
+                        .sort((a, b) => b.score - a.score)
+                        .slice(0, MAX_ENTRIES);
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function saveLeaderboard(entries) {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries.slice(0, MAX_ENTRIES)));
+                } catch (e) {
+                    console.log('Could not save leaderboard');
+                }
+            }
+
+            function addScore(name, score) {
+                const nameTrimmed = name.trim() || 'Anonymous 🐱';
+                const entries = getLeaderboard();
+                entries.push({ name: nameTrimmed, score: Math.round(score) });
+                entries.sort((a, b) => b.score - a.score);
+                const trimmed = entries.slice(0, MAX_ENTRIES);
+                saveLeaderboard(trimmed);
+                return trimmed;
+            }
+
+            function renderLeaderboard() {
+                const entries = getLeaderboard();
+                leaderboardList.innerHTML = '';
+                if (entries.length === 0) {
+                    const li = document.createElement('li');
+                    li.className = 'leaderboard-empty';
+                    li.textContent = 'No scores yet — be the first! 🍎';
+                    leaderboardList.appendChild(li);
+                } else {
+                    entries.forEach((entry, i) => {
+                        const li = document.createElement('li');
+                        if (i === 0) li.classList.add('top-1');
+                        if (i === 1) li.classList.add('top-2');
+                        if (i === 2) li.classList.add('top-3');
+                        const rankSpan = document.createElement('span');
+                        rankSpan.className = 'leader-rank';
+                        if (i === 0) rankSpan.classList.add('r1');
+                        if (i === 1) rankSpan.classList.add('r2');
+                        if (i === 2) rankSpan.classList.add('r3');
+                        rankSpan.textContent = `#${i + 1}`;
+                        const nameSpan = document.createElement('span');
+                        nameSpan.className = 'leader-name';
+                        nameSpan.textContent = entry.name;
+                        const scoreSpan = document.createElement('span');
+                        scoreSpan.className = 'leader-score';
+                        scoreSpan.textContent = entry.score.toLocaleString();
+                        li.appendChild(rankSpan);
+                        li.appendChild(nameSpan);
+                        li.appendChild(scoreSpan);
+                        leaderboardList.appendChild(li);
+                    });
+                }
+                updateTopScorerDisplay();
+            }
+
+            function updateTopScorerDisplay() {
+                const entries = getLeaderboard();
+                if (entries.length > 0) {
+                    const top = entries[0];
+                    topScorerDisplay.textContent = `${top.name} (${top.score.toLocaleString()})`;
+                    topScorerInfo.classList.add('top-scorer-highlight');
+                } else {
+                    topScorerDisplay.textContent = '---';
+                    topScorerInfo.classList.remove('top-scorer-highlight');
+                }
+            }
+
+            function openLeaderboard() {
+                leaderboardOpen = true;
+                leaderboardPanel.classList.add('open');
+                top10ToggleBtn.classList.add('active-leader');
+                top10ToggleBtn.textContent = 'TOP 10 ▲';
+                renderLeaderboard();
+            }
+
+            function closeLeaderboard() {
+                leaderboardOpen = false;
+                leaderboardPanel.classList.remove('open');
+                top10ToggleBtn.classList.remove('active-leader');
+                top10ToggleBtn.textContent = 'TOP 10 🏆';
+            }
+
+            function toggleLeaderboard() {
+                if (leaderboardOpen) {
+                    closeLeaderboard();
+                } else {
+                    openLeaderboard();
+                }
+            }
+
+            top10ToggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleLeaderboard();
+            });
+
+            function showNameModal(score) {
+                pendingSaveScore = score;
+                finalScoreDisplay.textContent = score.toLocaleString() + ' pts';
+                playerNameInput.value = '';
+                nameModalOverlay.classList.add('active');
+                setTimeout(() => playerNameInput.focus(), 300);
+            }
+
+            function hideNameModal() {
+                nameModalOverlay.classList.remove('active');
+                pendingSaveScore = 0;
+            }
+
+            function handleSaveScore() {
+                const name = playerNameInput.value.trim() || 'Anonymous 🐱';
+                if (pendingSaveScore > 0) {
+                    addScore(name, pendingSaveScore);
+                    renderLeaderboard();
+                    if (!leaderboardOpen) {
+                        openLeaderboard();
+                    }
+                }
+                hideNameModal();
+                resetGameAfterSave();
+            }
+
+            function handleSkipScore() {
+                hideNameModal();
+                resetGameAfterSave();
+            }
+
+            function resetGameAfterSave() {
+                round = 1;
+                totalScore = 0;
+                goldStreak = 0;
+                roundResults = [];
+                gameOver = false;
+                initGrid();
+                renderGrid();
+                updateHUD();
+                updateTracker();
+                gameScreen.scrollTop = 0;
+            }
+
+            saveScoreBtn.addEventListener('click', handleSaveScore);
+            skipScoreBtn.addEventListener('click', handleSkipScore);
+
+            playerNameInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    handleSaveScore();
+                }
+            });
+
+            nameModalOverlay.addEventListener('click', (e) => {
+                if (e.target === nameModalOverlay) {
+                    handleSkipScore();
+                }
+            });
+
+            // ===== GAME LOGIC =====
             const IMAGES = {
                 gold: 'https://i.postimg.cc/crXr135V/golden3.png',
                 green: 'https://i.postimg.cc/dLqhK64s/good1.png',
@@ -1435,7 +1943,6 @@
             const cardGrid = document.getElementById('cardGrid'),
                 roundDisplay = document.getElementById('roundDisplay'),
                 scoreDisplay = document.getElementById('scoreDisplay'),
-                topScorerDisplay = document.getElementById('topScorerDisplay'),
                 roundTracker = document.getElementById('roundTracker'),
                 winMessage = document.getElementById('winMessage');
 
@@ -1550,26 +2057,26 @@
             function endGame() {
                 gameOver = true;
                 roundActive = false;
-                winMessage.textContent = `🏆 ${totalScore.toLocaleString()} pts!`;
+                const finalScore = totalScore;
+                winMessage.textContent = `🏆 ${finalScore.toLocaleString()} pts!`;
                 winMessage.className = 'win-message show gold';
+                const entries = getLeaderboard();
+                const isHighScore = entries.length < MAX_ENTRIES || finalScore > (entries[entries.length - 1]?.score ||
+                    0);
                 setTimeout(() => {
                     winMessage.classList.remove('show', 'gold');
-                    round = 1;
-                    totalScore = 0;
-                    goldStreak = 0;
-                    roundResults = [];
-                    gameOver = false;
-                    initGrid();
-                    renderGrid();
-                    updateHUD();
-                    updateTracker();
+                    if (isHighScore && finalScore > 0) {
+                        showNameModal(finalScore);
+                    } else {
+                        resetGameAfterSave();
+                    }
                 }, 1600);
             }
 
             function updateHUD() {
                 roundDisplay.textContent = `${Math.min(round,TOTAL_ROUNDS)} / ${TOTAL_ROUNDS}`;
                 scoreDisplay.textContent = totalScore;
-                topScorerDisplay.textContent = '---';
+                updateTopScorerDisplay();
             }
 
             function updateTracker() {
@@ -1599,8 +2106,13 @@
                 renderGrid();
                 updateHUD();
                 updateTracker();
+                renderLeaderboard();
                 gameScreen.scrollTop = 0;
+                hideNameModal();
             }
+
+            // Initialize leaderboard display on load
+            renderLeaderboard();
         })();
     </script>
 </body>
