@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
     <title>🍎🐱 APPLE CAT · Epic Hub</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
@@ -39,6 +39,8 @@
             font-family: 'Fredoka One', 'Segoe UI', 'Helvetica Neue', cursive, sans-serif;
             background: var(--bg-deep);
             -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* background layers */
@@ -141,13 +143,20 @@
             filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.6));
             z-index: 50;
             cursor: pointer;
-            transition: 0.3s;
+            transition: opacity 0.35s ease, transform 0.3s ease, filter 0.3s ease;
             background: none;
             border: none;
             loading: eager;
             fetchpriority: high;
+            opacity: 1;
+            pointer-events: auto;
         }
-        .global-logo:hover {
+        .global-logo.logo-hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.8);
+        }
+        .global-logo:hover:not(.logo-hidden) {
             transform: scale(1.06);
             filter: drop-shadow(0 10px 24px rgba(199, 58, 70, 0.55));
         }
@@ -160,11 +169,11 @@
             gap: 0.4rem;
             width: 100%;
             max-width: 1350px;
-            min-height: 0;
             flex: 1;
             justify-content: center;
-            padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+            padding: 0.5rem 0.5rem 1rem 0.5rem;
             position: relative;
+            min-height: 0;
         }
         .title-container {
             width: 100%;
@@ -174,6 +183,7 @@
             padding: 0 0.5rem;
             margin-bottom: 0.2rem;
             margin-top: 0.2rem;
+            flex-shrink: 0;
         }
         .hub-title {
             font-size: clamp(2rem, 5.5vw, 3.6rem);
@@ -373,6 +383,8 @@
             font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 0.1rem;
+            z-index: 1;
+            position: relative;
         }
         .card-desc {
             font-size: 0.85rem;
@@ -380,9 +392,11 @@
             line-height: 1.3;
             margin-bottom: 0.6rem;
             flex-grow: 1;
+            z-index: 1;
+            position: relative;
         }
 
-        /* Stats card - improved layout */
+        /* Stats card */
         #statsCard .card {
             justify-content: flex-start;
         }
@@ -398,6 +412,8 @@
             width: 100%;
             margin-bottom: 0.6rem;
             flex-grow: 1;
+            z-index: 1;
+            position: relative;
         }
         .stat-row {
             display: flex;
@@ -475,6 +491,8 @@
             padding: 0.5rem 0.8rem 0.6rem;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
             margin-bottom: 0.6rem;
+            z-index: 1;
+            position: relative;
         }
         .mcap-bar-label {
             display: flex;
@@ -522,7 +540,9 @@
             border: none;
             cursor: pointer;
             z-index: 2;
+            position: relative;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            text-decoration: none;
         }
         .play-btn {
             background: var(--apple-red-muted);
@@ -558,10 +578,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             gap: clamp(3px, 0.8vh, 8px);
-            padding: clamp(6px, 1.2vh, 12px) 1rem;
-            min-height: 0;
+            padding: clamp(6px, 1.2vh, 12px) 1rem clamp(6px, 1.2vh, 12px);
             flex: 1;
             overflow: hidden;
         }
@@ -577,13 +596,15 @@
             width: 100%;
             max-width: 560px;
             height: auto;
-            max-height: 16vh;          /* increased from 14vh to match original feel */
+            max-height: 24vh;
             border-radius: 12px;
-            object-fit: cover;
+            object-fit: contain;
             filter: drop-shadow(0 6px 22px rgba(0, 0, 0, 0.55));
             loading: eager;
             fetchpriority: high;
             flex-shrink: 0;
+            display: block;
+            background: transparent;
         }
         .match-instruction {
             font-size: clamp(0.85rem, 2.8vw, 1.3rem);
@@ -632,23 +653,24 @@
             background: rgba(22, 10, 14, 0.5);
             backdrop-filter: blur(16px);
             border-radius: 20px;
-            padding: 8px;
+            padding: clamp(4px, 1.2vw, 10px);
             border: 1px solid rgba(255, 255, 255, 0.14);
             box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
             width: 100%;
-            max-width: min(540px, 85vmin);
+            max-width: min(540px, 88vmin);
             flex: 1 1 auto;
             min-height: 0;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            aspect-ratio: 1 / 1;
-            max-height: 55vh;
+            aspect-ratio: 4 / 3;
+            max-height: 58vh;
         }
         .card-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
+            grid-template-rows: repeat(3, 1fr);
+            gap: clamp(3px, 1.5vw, 8px);
             width: 100%;
             height: 100%;
         }
@@ -657,7 +679,7 @@
             display: flex;
             justify-content: space-between;
             width: 100%;
-            max-width: min(540px, 85vmin);
+            max-width: min(540px, 88vmin);
             margin: 2px auto 0;
             gap: 4px;
             flex-shrink: 0;
@@ -711,6 +733,9 @@
             cursor: pointer;
             min-height: 0;
             min-width: 0;
+            place-self: center;
+            width: 100%;
+            height: 100%;
         }
         .card-inner {
             position: relative;
@@ -743,7 +768,7 @@
         }
         .card-back::after {
             content: '🍎';
-            font-size: 2.4rem;
+            font-size: clamp(1.4rem, 5vw, 2.4rem);
             text-shadow: 0 0 22px rgba(199, 58, 70, 0.75);
         }
         .card-front {
@@ -818,16 +843,34 @@
             color: #fff;
         }
 
-        /* responsive */
+        /* ===== RESPONSIVE ===== */
+
+        /* Tablet & small desktop: stack cards vertically, allow hub scroll */
         @media (max-width: 900px) {
+            #hubScreen {
+                overflow-y: auto;
+                overflow-x: hidden;
+                justify-content: flex-start;
+                -webkit-overflow-scrolling: touch;
+            }
+            .hub-wrapper {
+                justify-content: flex-start;
+                flex: none;
+                min-height: auto;
+                gap: 0.6rem;
+                padding: 0.6rem 0.5rem 2rem 0.5rem;
+            }
             .cards-stage {
                 flex-direction: column;
                 gap: 0.8rem;
+                flex: none;
                 height: auto;
+                min-height: auto;
             }
             .card-link {
                 max-width: 100%;
                 min-width: unset;
+                flex: none;
             }
             .global-logo {
                 width: 56px;
@@ -840,14 +883,15 @@
             }
             .grid-frame {
                 padding: 6px;
-                max-width: min(480px, 82vmin);
-                max-height: 48vh;
+                max-width: min(480px, 84vmin);
+                max-height: 50vh;
+                aspect-ratio: 4 / 3;
             }
             .card-grid {
                 gap: 5px;
             }
             .card-back::after {
-                font-size: 1.8rem;
+                font-size: clamp(1.3rem, 4.5vw, 1.8rem);
             }
             .info-item {
                 padding: 3px 10px;
@@ -857,16 +901,48 @@
                 font-size: 0.85rem;
             }
             .game-banner-img {
-                max-height: 12vh;
+                max-height: 16vh;
+            }
+            .game-wrapper {
+                justify-content: flex-start;
+                gap: clamp(2px, 0.6vh, 6px);
+                padding: clamp(4px, 1vh, 8px) 0.8rem clamp(4px, 1vh, 8px);
             }
         }
 
+        /* Phone */
         @media (max-width: 480px) {
+            #hubScreen {
+                overflow-y: auto;
+                overflow-x: hidden;
+                justify-content: flex-start;
+                -webkit-overflow-scrolling: touch;
+            }
             .global-logo {
                 width: 44px;
                 height: 44px;
                 top: 6px;
                 left: 8px;
+            }
+            .hub-wrapper {
+                justify-content: flex-start;
+                flex: none;
+                min-height: auto;
+                gap: 0.5rem;
+                padding: 0.5rem 0.4rem 2.2rem 0.4rem;
+            }
+            .cards-stage {
+                flex-direction: column;
+                gap: 0.7rem;
+                flex: none;
+                height: auto;
+                min-height: auto;
+                padding: 0 0.3rem;
+            }
+            .card-link {
+                max-width: 100%;
+                min-width: unset;
+                flex: none;
             }
             .hub-title {
                 font-size: 1.4rem;
@@ -890,14 +966,16 @@
             }
             .grid-frame {
                 padding: 4px;
-                max-width: min(380px, 80vmin);
-                max-height: 42vh;
+                max-width: min(380px, 82vmin);
+                max-height: 44vh;
+                aspect-ratio: 4 / 3;
+                border-radius: 16px;
             }
             .card-grid {
-                gap: 4px;
+                gap: 3px;
             }
             .card-back::after {
-                font-size: 1.4rem;
+                font-size: clamp(1rem, 4vw, 1.4rem);
             }
             .info-item {
                 padding: 2px 8px;
@@ -907,7 +985,7 @@
                 font-size: 0.7rem;
             }
             .game-banner-img {
-                max-height: 10vh;
+                max-height: 12vh;
             }
             .match-instruction {
                 font-size: 0.7rem;
@@ -942,34 +1020,44 @@
             .mcap-bar {
                 height: 10px;
             }
+            .game-wrapper {
+                justify-content: flex-start;
+                gap: clamp(2px, 0.5vh, 4px);
+                padding: clamp(3px, 0.7vh, 5px) 0.5rem clamp(3px, 0.7vh, 5px);
+            }
+            .win-message {
+                font-size: clamp(1rem, 3.5vw, 1.6rem);
+            }
         }
 
+        /* Short viewport (landscape phones / small desktops) */
         @media (max-height: 700px) {
             .game-wrapper {
-                gap: clamp(2px, 0.6vh, 5px);
-                padding: clamp(3px, 0.8vh, 6px) 0.8rem;
+                gap: clamp(1px, 0.5vh, 4px);
+                padding: clamp(2px, 0.6vh, 5px) 0.8rem;
             }
             .game-banner-img {
-                max-height: 12vh;
+                max-height: 11vh;
             }
             .match-instruction {
-                font-size: clamp(0.7rem, 2.2vw, 1rem);
+                font-size: clamp(0.65rem, 2vw, 0.95rem);
             }
             .info-item {
                 padding: 2px 10px;
-                font-size: 0.7rem;
+                font-size: 0.65rem;
             }
             .grid-frame {
-                padding: 5px;
-                max-width: min(480px, 78vmin);
-                max-height: 42vh;
+                padding: 4px;
+                max-width: min(460px, 76vmin);
+                max-height: 40vh;
+                aspect-ratio: 4 / 3;
             }
             .card-grid {
-                gap: 4px;
+                gap: 3px;
             }
             .btn-back {
-                padding: 4px 16px;
-                font-size: 0.7rem;
+                padding: 3px 14px;
+                font-size: 0.65rem;
                 margin-top: 1px;
             }
             .tracker-dot {
@@ -977,7 +1065,7 @@
                 height: 12px;
             }
             .card-back::after {
-                font-size: 1.6rem;
+                font-size: clamp(1rem, 3.5vw, 1.5rem);
             }
         }
 
@@ -986,39 +1074,48 @@
                 max-height: 8vh;
             }
             .grid-frame {
-                max-height: 34vh;
-                padding: 4px;
+                max-height: 32vh;
+                padding: 3px;
+                border-radius: 14px;
+                aspect-ratio: 4 / 3;
             }
             .card-grid {
-                gap: 3px;
+                gap: 2px;
             }
             .info-item {
                 padding: 1px 8px;
-                font-size: 0.55rem;
+                font-size: 0.5rem;
             }
             .info-item .emoji-big {
-                font-size: 0.6rem;
+                font-size: 0.55rem;
             }
             .match-instruction {
-                font-size: 0.6rem;
+                font-size: 0.55rem;
             }
             .tracker-dot {
-                width: 10px;
-                height: 10px;
+                width: 9px;
+                height: 9px;
                 border-width: 1.5px;
             }
             .btn-back {
-                padding: 3px 12px;
-                font-size: 0.55rem;
+                padding: 2px 10px;
+                font-size: 0.5rem;
             }
             .card-back::after {
-                font-size: 1.2rem;
+                font-size: clamp(0.8rem, 3vw, 1.1rem);
             }
             .global-logo {
                 width: 36px;
                 height: 36px;
                 top: 4px;
                 left: 6px;
+            }
+            .game-wrapper {
+                gap: clamp(1px, 0.4vh, 2px);
+                padding: clamp(1px, 0.5vh, 3px) 0.5rem;
+            }
+            .win-message {
+                font-size: clamp(0.8rem, 3vw, 1.2rem);
             }
         }
     </style>
@@ -1036,7 +1133,7 @@
     <canvas id="petalCanvas"></canvas>
 
     <!-- GLOBAL LOGO (top-left) -->
-    <img class="global-logo" src="https://i.postimg.cc/3xByZMxY/gato1.png" alt="Logo" loading="eager" fetchpriority="high" id="globalLogo">
+    <img class="global-logo" src="https://i.postimg.cc/3xByZMxY/gato1.png" alt="Logo" loading="eager" fetchpriority="high" id="globalLogo" />
 
     <!-- HUB SCREEN -->
     <div id="hubScreen" class="screen active">
@@ -1055,7 +1152,7 @@
                 <div class="card-link" id="gameCard">
                     <div class="card">
                         <div class="card-graphic-wrap">
-                            <img src="https://i.postimg.cc/wxbsSk6q/Chat-GPT-Image-13-jul-2026-06-38-35-p-m-(1).png" alt="Game" loading="lazy">
+                            <img src="https://i.postimg.cc/wxbsSk6q/Chat-GPT-Image-13-jul-2026-06-38-35-p-m-(1).png" alt="Game" loading="lazy" />
                             <div class="card-graphic-leaf cg1"></div>
                             <div class="card-graphic-leaf cg2"></div>
                         </div>
@@ -1064,7 +1161,7 @@
                         <button class="card-btn play-btn" id="playBtn">▶ Play Now</button>
                     </div>
                 </div>
-                <!-- Stats Card with improved grid -->
+                <!-- Stats Card -->
                 <div class="card-link" id="statsCard">
                     <div class="card">
                         <h3 class="card-title">🍏 TOKEN STATS</h3>
@@ -1098,7 +1195,7 @@
                 <div class="card-link" id="gifCard">
                     <div class="card">
                         <div class="card-graphic-wrap">
-                            <img src="https://i.postimg.cc/sfk3Qnyp/ezgif-com-gif-maker-(10).gif" alt="GIF" loading="lazy">
+                            <img src="https://i.postimg.cc/sfk3Qnyp/ezgif-com-gif-maker-(10).gif" alt="GIF" loading="lazy" />
                             <div class="card-graphic-leaf cg1"></div>
                             <div class="card-graphic-leaf cg2"></div>
                         </div>
@@ -1115,7 +1212,7 @@
     <div id="gameScreen" class="screen">
         <div class="game-wrapper">
             <div class="game-header">
-                <img class="game-banner-img" src="https://i.postimg.cc/RCJx1cZ4/Chat-GPT-Image-13-jul-2026-19-03-13-(1).png" alt="Banner" loading="eager">
+                <img class="game-banner-img" src="https://i.postimg.cc/RCJx1cZ4/Chat-GPT-Image-13-jul-2026-19-03-13-(1).png" alt="Banner" loading="eager" />
                 <p class="match-instruction">MATCH 3 OF THE SAME</p>
             </div>
             <div class="info-row">
@@ -1139,22 +1236,25 @@
             const pCtx = petalCanvas.getContext('2d');
             let pW, pH, petals = [];
 
-            function resizePetal() { pW = petalCanvas.width = innerWidth;
-                pH = petalCanvas.height = innerHeight; }
+            function resizePetal() {
+                pW = petalCanvas.width = innerWidth;
+                pH = petalCanvas.height = innerHeight;
+            }
 
             function initPetals() {
                 petals = [];
-                for (let i = 0; i < 55; i++) petals.push({
-                    x: Math.random() * pW,
-                    y: Math.random() * pH,
-                    r: Math.random() * 2 + 0.6,
-                    speed: Math.random() * 0.9 + 0.3,
-                    wind: (Math.random() - 0.5) * 1.3,
-                    windSpeed: Math.random() * 0.008 + 0.002,
-                    windPhase: Math.random() * Math.PI * 2,
-                    opacity: Math.random() * 0.35 + 0.25,
-                    hue: Math.random() < 0.5 ? 'rgba(199,58,70,' : 'rgba(250,246,242,',
-                });
+                for (let i = 0; i < 55; i++)
+                    petals.push({
+                        x: Math.random() * pW,
+                        y: Math.random() * pH,
+                        r: Math.random() * 2 + 0.6,
+                        speed: Math.random() * 0.9 + 0.3,
+                        wind: (Math.random() - 0.5) * 1.3,
+                        windSpeed: Math.random() * 0.008 + 0.002,
+                        windPhase: Math.random() * Math.PI * 2,
+                        opacity: Math.random() * 0.35 + 0.25,
+                        hue: Math.random() < 0.5 ? 'rgba(199,58,70,' : 'rgba(250,246,242,',
+                    });
             }
 
             function drawPetals() {
@@ -1163,8 +1263,10 @@
                     p.y += p.speed;
                     p.windPhase += p.windSpeed;
                     p.x += Math.sin(p.windPhase) * p.wind * 4;
-                    if (p.y > pH + 12 || p.x < -12 || p.x > pW + 12) { p.y = -12;
-                        p.x = Math.random() * pW; }
+                    if (p.y > pH + 12 || p.x < -12 || p.x > pW + 12) {
+                        p.y = -12;
+                        p.x = Math.random() * pW;
+                    }
                     pCtx.globalAlpha = p.opacity;
                     pCtx.beginPath();
                     pCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
@@ -1177,31 +1279,42 @@
                 pCtx.shadowBlur = 0;
                 requestAnimationFrame(drawPetals);
             }
-            window.addEventListener('resize', () => { resizePetal();
-                initPetals(); });
+            window.addEventListener('resize', () => {
+                resizePetal();
+                initPetals();
+            });
             resizePetal();
             initPetals();
             drawPetals();
 
-            // ===== LOGO CLICK =====
-            document.getElementById('globalLogo').addEventListener('click', () => {
-                if (gameScreen.classList.contains('active')) {
-                    gameScreen.classList.remove('active');
-                    hubScreen.classList.add('active');
-                }
-            });
-
-            // ===== CA COPY =====
+            // ===== DOM REFS =====
+            const globalLogo = document.getElementById('globalLogo');
+            const hubScreen = document.getElementById('hubScreen');
+            const gameScreen = document.getElementById('gameScreen');
             const caLine = document.getElementById('caLine');
             const copyIcon = document.getElementById('copyIcon');
             const copyFeedback = document.getElementById('copyFeedback');
             const caText = '66R44YgXe6ZbxRmDiBqkQ5t6yHu72isuE8BbS6u684fu';
+
+            // ===== LOGO CLICK =====
+            globalLogo.addEventListener('click', () => {
+                if (gameScreen.classList.contains('active')) {
+                    // Go back to hub
+                    gameScreen.classList.remove('active');
+                    hubScreen.classList.add('active');
+                    globalLogo.classList.remove('logo-hidden');
+                }
+            });
+
+            // ===== CA COPY =====
             caLine.addEventListener('click', () => {
                 navigator.clipboard.writeText(caText).then(() => {
                     copyIcon.style.display = 'none';
                     copyFeedback.style.display = 'inline';
-                    setTimeout(() => { copyIcon.style.display = 'inline';
-                        copyFeedback.style.display = 'none'; }, 1500);
+                    setTimeout(() => {
+                        copyIcon.style.display = 'inline';
+                        copyFeedback.style.display = 'none';
+                    }, 1500);
                 });
             });
 
@@ -1254,17 +1367,21 @@
             });
 
             // ===== SCREEN SWITCHING =====
-            const hubScreen = document.getElementById('hubScreen');
-            const gameScreen = document.getElementById('gameScreen');
             document.getElementById('playBtn').addEventListener('click', (e) => {
                 e.preventDefault();
                 hubScreen.classList.remove('active');
                 gameScreen.classList.add('active');
+                globalLogo.classList.add('logo-hidden');
                 initGame();
+                // Scroll hub back to top for next visit
+                hubScreen.scrollTop = 0;
             });
+
             document.getElementById('backToHubBtn').addEventListener('click', () => {
                 gameScreen.classList.remove('active');
                 hubScreen.classList.add('active');
+                globalLogo.classList.remove('logo-hidden');
+                hubScreen.scrollTop = 0;
             });
 
             // ===== GAME LOGIC =====
@@ -1288,8 +1405,10 @@
             function initGrid() {
                 let t = [];
                 for (let i = 0; i < 4; i++) t.push('gold', 'green', 'red');
-                for (let i = t.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));
-                    [t[i], t[j]] = [t[j], t[i]]; }
+                for (let i = t.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [t[i], t[j]] = [t[j], t[i]];
+                }
                 grid = t.map(ty => ({ type: ty, revealed: false }));
                 revealedCount = { gold: 0, green: 0, red: 0 };
                 roundActive = true;
@@ -1316,8 +1435,10 @@
                     inner.appendChild(front);
                     inner.appendChild(back);
                     c.appendChild(inner);
-                    if (it.revealed) { c.classList.add('flipped');
-                        c.classList.add(TYPE_COLOR[it.type]); }
+                    if (it.revealed) {
+                        c.classList.add('flipped');
+                        c.classList.add(TYPE_COLOR[it.type]);
+                    }
                     c.addEventListener('click', () => handleCardClick(idx));
                     cardGrid.appendChild(c);
                 });
@@ -1337,15 +1458,24 @@
                     roundActive = false;
                     let pts = POINTS[it.type],
                         bonus = 0;
-                    if (it.type === 'gold') { goldStreak++; if (goldStreak >= 2) { bonus = (goldStreak - 1) * 250;
-                            pts += bonus; } } else goldStreak = 0;
+                    if (it.type === 'gold') {
+                        goldStreak++;
+                        if (goldStreak >= 2) {
+                            bonus = (goldStreak - 1) * 250;
+                            pts += bonus;
+                        }
+                    } else goldStreak = 0;
                     totalScore += pts;
                     updateHUD();
                     roundResults[round - 1] = it.type;
                     updateTracker();
-                    grid.forEach((g, i) => { if (g.type === it.type && g.revealed) { const e = cardGrid.children[i];
+                    grid.forEach((g, i) => {
+                        if (g.type === it.type && g.revealed) {
+                            const e = cardGrid.children[i];
                             e.classList.add('glow');
-                            e.classList.add(TYPE_COLOR[it.type]); } });
+                            e.classList.add(TYPE_COLOR[it.type]);
+                        }
+                    });
                     winMessage.textContent = `+${pts}${bonus > 0 ? ' 🔥+' + bonus : ''}`;
                     winMessage.className = `win-message show ${TYPE_COLOR[it.type]}`;
                     setTimeout(() => {
@@ -1362,18 +1492,23 @@
                     updateTracker();
                     winMessage.textContent = '🍃 No match';
                     winMessage.className = 'win-message show green';
-                    setTimeout(() => { winMessage.classList.remove('show', 'green');
-                        nextRound(); }, 850);
+                    setTimeout(() => {
+                        winMessage.classList.remove('show', 'green');
+                        nextRound();
+                    }, 850);
                 }
                 updateHUD();
             }
 
-            function nextRound() { round++; if (round > TOTAL_ROUNDS) { endGame(); return; }
+            function nextRound() {
+                round++;
+                if (round > TOTAL_ROUNDS) { endGame(); return; }
                 initGrid();
                 renderGrid();
                 updateHUD();
                 updateTracker();
-                isProcessing = false; }
+                isProcessing = false;
+            }
 
             function endGame() {
                 gameOver = true;
@@ -1417,7 +1552,8 @@
                 }
             }
 
-            function initGame() { round = 1;
+            function initGame() {
+                round = 1;
                 totalScore = 0;
                 gameOver = false;
                 goldStreak = 0;
@@ -1425,7 +1561,8 @@
                 initGrid();
                 renderGrid();
                 updateHUD();
-                updateTracker(); }
+                updateTracker();
+            }
         })();
     </script>
 </body>
