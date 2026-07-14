@@ -22,9 +22,9 @@
             --border-subtle: rgba(199, 58, 70, 0.28);
             --border-glow: rgba(255, 255, 255, 0.45);
             --shadow-front: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 80px rgba(200, 58, 70, 0.3);
-            --radius-xl: 28px;
+            --radius-xl: 24px;
             --transition-bounce: 0.5s cubic-bezier(0.34, 1.3, 0.64, 1);
-            --grid-max-w: min(520px, 86vmin);
+            --grid-max-w: min(460px, 78vmin);
         }
 
         * {
@@ -133,12 +133,12 @@
 
         .global-logo {
             position: fixed;
-            top: 12px;
-            left: 16px;
-            width: 72px;
-            height: 72px;
+            top: 10px;
+            left: 14px;
+            width: 140px;
+            height: 140px;
             object-fit: contain;
-            filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.6));
+            filter: drop-shadow(0 8px 22px rgba(0, 0, 0, 0.65));
             z-index: 50;
             cursor: pointer;
             transition: opacity 0.35s ease, transform 0.3s ease, filter 0.3s ease;
@@ -154,34 +154,33 @@
         }
         .global-logo:hover:not(.logo-hidden) {
             transform: scale(1.06);
-            filter: drop-shadow(0 10px 24px rgba(199, 58, 70, 0.55));
+            filter: drop-shadow(0 12px 28px rgba(199, 58, 70, 0.6));
         }
 
         .hub-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.3rem;
             width: 100%;
-            max-width: 1350px;
+            max-width: 1200px;
             flex: 1;
             justify-content: center;
-            padding: 0.5rem 0.5rem 1rem 0.5rem;
+            padding: 0.4rem 0.5rem 0.8rem 0.5rem;
             position: relative;
             min-height: 0;
         }
         .title-container {
             width: 100%;
-            max-width: 1350px;
+            max-width: 1200px;
             text-align: center;
             z-index: 5;
             padding: 0 0.5rem;
-            margin-bottom: 0.2rem;
-            margin-top: 0.2rem;
+            margin-bottom: 0.1rem;
             flex-shrink: 0;
         }
         .hub-title {
-            font-size: clamp(2rem, 5.5vw, 3.6rem);
+            font-size: clamp(1.6rem, 4.5vw, 3rem);
             font-weight: 800;
             letter-spacing: -0.02em;
             color: #fff;
@@ -198,13 +197,13 @@
         .ca-line {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
             font-family: 'Fredoka One', monospace;
-            font-size: 1rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: rgba(255, 255, 255, 0.9);
             background: rgba(255, 255, 255, 0.07);
-            padding: 0.35rem 1.2rem;
+            padding: 0.3rem 1rem;
             border-radius: 28px;
             border: 1px solid rgba(255, 255, 255, 0.22);
             cursor: pointer;
@@ -219,18 +218,18 @@
             border-color: rgba(255, 255, 255, 0.45);
         }
         .ca-line .ca-prefix {
-            font-size: 1.1rem;
+            font-size: 0.95rem;
         }
         .ca-line .ca-text {
             word-break: break-all;
-            font-size: 0.85rem;
+            font-size: 0.72rem;
         }
         .ca-line .copy-icon {
-            font-size: 1.2rem;
+            font-size: 1rem;
             opacity: 0.8;
         }
         .ca-line .copy-feedback {
-            font-size: 1rem;
+            font-size: 0.85rem;
             display: none;
         }
 
@@ -239,25 +238,25 @@
             flex-direction: row;
             align-items: stretch;
             justify-content: center;
-            gap: 1.5rem;
+            gap: 1rem;
             width: 100%;
-            max-width: 1350px;
+            max-width: 1200px;
             flex: 1;
             min-height: 0;
-            padding: 0 0.5rem;
+            padding: 0 0.3rem;
         }
         .card-link {
             text-decoration: none;
             color: inherit;
             flex: 1;
-            min-width: 200px;
-            max-width: 400px;
+            min-width: 170px;
+            max-width: 360px;
             display: flex;
             cursor: pointer;
             transition: all var(--transition-bounce);
         }
         .card-link:hover {
-            transform: translateY(-6px);
+            transform: translateY(-5px);
         }
         .card-link:active {
             transform: scale(0.97);
@@ -266,13 +265,13 @@
         .card {
             background: var(--card-bg);
             border-radius: var(--radius-xl);
-            padding: 1.2rem 1rem 1.4rem;
+            padding: 0.8rem 0.7rem 1rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
             width: 100%;
-            box-shadow: 0 4px 28px rgba(0, 0, 0, 0.55);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
             border: 1.5px solid var(--border-subtle);
             backdrop-filter: blur(12px);
             position: relative;
@@ -301,24 +300,24 @@
             top: 0;
             left: 20%;
             right: 20%;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), var(--apple-red-soft),
-                    rgba(255, 255, 255, 0.4), transparent);
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), var(--apple-red-soft),
+                    rgba(255, 255, 255, 0.35), transparent);
             border-radius: 0 0 50% 50%;
             z-index: 4;
-            opacity: 0.6;
+            opacity: 0.5;
             transition: 0.5s;
         }
         .card:hover::after {
             opacity: 1;
-            height: 4px;
+            height: 3px;
         }
 
         .card-graphic-wrap {
             width: 100%;
             aspect-ratio: 1 / 1;
-            margin-bottom: 0.6rem;
-            border-radius: 18px;
+            margin-bottom: 0.35rem;
+            border-radius: 16px;
             background: rgba(0, 0, 0, 0.32);
             border: 2px dashed rgba(255, 255, 255, 0.15);
             display: flex;
@@ -328,12 +327,13 @@
             overflow: hidden;
             transition: all var(--transition-bounce);
             flex-shrink: 0;
+            max-height: 55vh;
         }
         .card-graphic-wrap img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            border-radius: 16px;
+            border-radius: 14px;
             transition: transform 0.5s;
             filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.4));
         }
@@ -349,17 +349,17 @@
             transition: all var(--transition-bounce);
         }
         .cg1 {
-            top: -4px;
-            right: -6px;
-            width: 16px;
-            height: 9px;
+            top: -3px;
+            right: -5px;
+            width: 14px;
+            height: 7px;
             transform: rotate(20deg);
         }
         .cg2 {
-            bottom: -4px;
-            left: -6px;
-            width: 13px;
-            height: 7px;
+            bottom: -3px;
+            left: -5px;
+            width: 11px;
+            height: 6px;
             background: var(--leaf-green-soft);
             transform: rotate(-30deg);
         }
@@ -372,20 +372,50 @@
             transform: rotate(-40deg) scale(1.2);
         }
 
-        .card-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.1rem;
+        .card-dots {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 0.3rem;
             z-index: 1;
             position: relative;
+            flex-shrink: 0;
+        }
+        .card-dots .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+        }
+        .dot-gold {
+            background: #d4a54a;
+            box-shadow: 0 0 10px rgba(212, 165, 74, 0.6);
+        }
+        .dot-green {
+            background: #5a9e44;
+            box-shadow: 0 0 10px rgba(90, 158, 68, 0.6);
+        }
+        .dot-red {
+            background: #c73a46;
+            box-shadow: 0 0 10px rgba(199, 58, 70, 0.6);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.05rem;
+            z-index: 1;
+            position: relative;
+            flex-shrink: 0;
         }
         .card-desc {
-            font-size: 0.85rem;
+            font-size: 0.72rem;
             color: var(--text-secondary);
-            line-height: 1.3;
-            margin-bottom: 0.6rem;
-            flex-grow: 1;
+            line-height: 1.2;
+            margin-bottom: 0.4rem;
+            flex-shrink: 0;
             z-index: 1;
             position: relative;
         }
@@ -394,17 +424,17 @@
             justify-content: flex-start;
         }
         #statsCard .card-title {
-            font-size: clamp(1.2rem, 2.2vw, 1.6rem);
-            margin-bottom: 0.6rem;
+            font-size: clamp(1rem, 1.8vw, 1.3rem);
+            margin-bottom: 0.4rem;
             text-shadow: 0 0 18px rgba(196, 154, 92, 0.4);
         }
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.6rem;
+            gap: 0.4rem;
             width: 100%;
-            margin-bottom: 0.6rem;
-            flex-grow: 1;
+            margin-bottom: 0.4rem;
+            flex-shrink: 0;
             z-index: 1;
             position: relative;
         }
@@ -413,14 +443,14 @@
             flex-direction: column;
             align-items: flex-start;
             justify-content: center;
-            padding: 0.6rem 0.8rem;
+            padding: 0.4rem 0.6rem;
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
-            border-radius: 14px;
+            border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-left: 4px solid var(--stat-accent, rgba(255, 255, 255, 0.25));
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            min-height: 60px;
+            min-height: 48px;
         }
         .card-link:hover .stat-row {
             transform: translateX(2px);
@@ -440,23 +470,23 @@
         .stat-label-wrap {
             display: flex;
             align-items: center;
-            gap: 0.3rem;
-            margin-bottom: 0.15rem;
+            gap: 0.2rem;
+            margin-bottom: 0.08rem;
         }
         .stat-icon {
-            font-size: 1.1rem;
+            font-size: 0.9rem;
             filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.4));
             flex-shrink: 0;
         }
         .stat-row .stat-label {
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.05em;
             font-weight: 600;
         }
         .stat-row .stat-value {
-            font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+            font-size: clamp(0.9rem, 1.8vw, 1.3rem);
             font-weight: 700;
             color: #fff;
             text-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
@@ -465,7 +495,7 @@
         }
         .stat-change {
             font-weight: 700;
-            font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+            font-size: clamp(0.9rem, 1.8vw, 1.3rem);
         }
         .stat-change.positive {
             color: #6fd158;
@@ -480,31 +510,32 @@
             width: 100%;
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 14px;
-            padding: 0.5rem 0.8rem 0.6rem;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            margin-bottom: 0.6rem;
+            border-radius: 12px;
+            padding: 0.35rem 0.6rem 0.4rem;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            margin-bottom: 0.35rem;
             z-index: 1;
             position: relative;
+            flex-shrink: 0;
         }
         .mcap-bar-label {
             display: flex;
             justify-content: space-between;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             font-weight: 700;
             color: rgba(255, 255, 255, 0.85);
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.2rem;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.04em;
         }
         .mcap-bar-label span:last-child {
-            font-size: 0.9rem;
+            font-size: 0.75rem;
             color: #fff;
             text-shadow: 0 0 10px rgba(196, 154, 92, 0.5);
         }
         .mcap-bar {
             width: 100%;
-            height: 14px;
+            height: 10px;
             background: rgba(255, 255, 255, 0.08);
             border-radius: 20px;
             overflow: hidden;
@@ -523,11 +554,11 @@
         .card-btn {
             display: inline-flex;
             align-items: center;
-            gap: 0.4rem;
-            padding: 0.6rem 1.4rem;
+            gap: 0.3rem;
+            padding: 0.45rem 1.1rem;
             border-radius: 36px;
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.72rem;
             letter-spacing: 0.02em;
             transition: 0.3s;
             border: none;
@@ -536,11 +567,12 @@
             position: relative;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
             text-decoration: none;
+            flex-shrink: 0;
         }
         .play-btn {
             background: var(--apple-red-muted);
             color: #fff;
-            box-shadow: 0 6px 22px rgba(184, 48, 60, 0.45);
+            box-shadow: 0 6px 20px rgba(184, 48, 60, 0.45);
         }
         .play-btn:hover {
             background: var(--apple-red-soft);
@@ -565,56 +597,54 @@
 
         /* ===== GAME SCREEN ===== */
         #gameScreen {
-            justify-content: flex-start;
+            justify-content: center;
             align-items: center;
-            overflow-y: auto;
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
+            overflow: hidden;
         }
         #gameScreen.active {
             display: flex;
         }
         .game-wrapper {
             width: 100%;
-            max-width: 620px;
+            max-width: 600px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            gap: clamp(3px, 0.8vh, 8px);
-            padding: clamp(6px, 1.2vh, 12px) 1rem clamp(16px, 3vh, 24px) 1rem;
-            flex: 0 0 auto;
-            min-height: auto;
-            overflow: visible;
+            justify-content: center;
+            gap: clamp(2px, 0.5vh, 5px);
+            padding: clamp(4px, 1vh, 10px) 1rem clamp(6px, 1.5vh, 14px) 1rem;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
         }
         .game-header {
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
+            gap: 1px;
             flex-shrink: 0;
         }
         .game-banner-img {
             width: 100%;
-            max-width: 560px;
+            max-width: 500px;
             height: auto;
-            max-height: 20vh;
-            border-radius: 12px;
+            max-height: 11vh;
+            border-radius: 10px;
             object-fit: contain;
-            filter: drop-shadow(0 6px 22px rgba(0, 0, 0, 0.55));
+            filter: drop-shadow(0 5px 18px rgba(0, 0, 0, 0.55));
             flex-shrink: 0;
             display: block;
             background: transparent;
         }
         .match-instruction {
-            font-size: clamp(0.85rem, 2.8vw, 1.3rem);
+            font-size: clamp(0.7rem, 2.2vw, 1.1rem);
             font-weight: 700;
             color: #fff;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.06em;
             text-align: center;
             width: 100%;
-            text-shadow: 0 0 22px rgba(255, 90, 101, 0.85);
+            text-shadow: 0 0 18px rgba(255, 90, 101, 0.85);
             line-height: 1.2;
             padding: 1px 0;
             flex-shrink: 0;
@@ -623,8 +653,8 @@
             display: flex;
             justify-content: space-between;
             width: 100%;
-            max-width: 560px;
-            gap: 6px;
+            max-width: 500px;
+            gap: 4px;
             margin: 1px 0;
             flex-shrink: 0;
             flex-wrap: wrap;
@@ -632,19 +662,19 @@
         .info-item {
             background: rgba(22, 10, 14, 0.6);
             backdrop-filter: blur(10px);
-            padding: 4px 14px;
-            border-radius: 28px;
+            padding: 3px 10px;
+            border-radius: 22px;
             border: 1px solid rgba(255, 255, 255, 0.12);
             font-family: 'Fredoka One', cursive;
             display: flex;
             align-items: center;
-            gap: 4px;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-            font-size: 0.8rem;
+            gap: 3px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
+            font-size: 0.68rem;
             flex-shrink: 0;
         }
         .info-item .emoji-big {
-            font-size: 1rem;
+            font-size: 0.85rem;
         }
         .info-item .value {
             font-weight: 700;
@@ -652,32 +682,42 @@
         }
         .info-item.top-scorer-highlight {
             border-color: var(--gold-accent);
-            box-shadow: 0 0 16px rgba(196, 154, 92, 0.5);
+            box-shadow: 0 0 14px rgba(196, 154, 92, 0.5);
             background: rgba(30, 15, 10, 0.7);
         }
 
+        .grid-container {
+            position: relative;
+            width: 100%;
+            max-width: var(--grid-max-w);
+            flex-shrink: 1;
+            flex-grow: 1;
+            min-height: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         .grid-frame {
             background: rgba(22, 10, 14, 0.5);
             backdrop-filter: blur(16px);
-            border-radius: 20px;
-            padding: clamp(4px, 1.2vw, 10px);
+            border-radius: 18px;
+            padding: clamp(3px, 1vw, 8px);
             border: 1px solid rgba(255, 255, 255, 0.14);
-            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
             width: 100%;
             max-width: var(--grid-max-w);
-            aspect-ratio: 1 / 1;
-            flex: 0 0 auto;
+            aspect-ratio: 4 / 3;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            min-height: 0;
             position: relative;
+            z-index: 1;
         }
         .card-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             grid-template-rows: repeat(3, 1fr);
-            gap: clamp(3px, 1.5vw, 8px);
+            gap: clamp(3px, 1.3vw, 7px);
             width: 100%;
             height: 100%;
             align-content: center;
@@ -689,13 +729,13 @@
             justify-content: space-between;
             width: 100%;
             max-width: var(--grid-max-w);
-            margin: 2px auto 0;
-            gap: 4px;
+            margin: 1px auto 0;
+            gap: 3px;
             flex-shrink: 0;
         }
         .tracker-dot {
-            width: 16px;
-            height: 16px;
+            width: 13px;
+            height: 13px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.07);
             border: 2px solid rgba(255, 255, 255, 0.18);
@@ -705,17 +745,17 @@
         .tracker-dot.active-red {
             background: #c73a46;
             border-color: #fff;
-            box-shadow: 0 0 12px #c73a46;
+            box-shadow: 0 0 10px #c73a46;
         }
         .tracker-dot.active-green {
             background: #5a9e44;
             border-color: #fff;
-            box-shadow: 0 0 12px #5a9e44;
+            box-shadow: 0 0 10px #5a9e44;
         }
         .tracker-dot.active-gold {
             background: #c49a5c;
             border-color: #fff;
-            box-shadow: 0 0 12px #c49a5c;
+            box-shadow: 0 0 10px #c49a5c;
         }
         .tracker-dot.neutral {
             background: rgba(255, 255, 255, 0.3);
@@ -723,7 +763,7 @@
         }
         .tracker-dot.current {
             border-color: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 0 18px rgba(255, 255, 255, 0.45);
+            box-shadow: 0 0 16px rgba(255, 255, 255, 0.45);
             animation: dotPulse 1.2s infinite;
         }
         @keyframes dotPulse {
@@ -732,7 +772,7 @@
                 transform: scale(1.05);
             }
             50% {
-                transform: scale(1.18);
+                transform: scale(1.16);
             }
         }
 
@@ -754,8 +794,8 @@
             height: 100%;
             transition: 0.5s cubic-bezier(0.34, 1.3, 0.64, 1);
             transform-style: preserve-3d;
-            border-radius: 12px;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
         }
         .match-card.flipped .card-inner {
             transform: rotateY(180deg);
@@ -767,7 +807,7 @@
             height: 100%;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -779,26 +819,26 @@
         }
         .card-back::after {
             content: '🍎';
-            font-size: clamp(1.4rem, 5vw, 2.4rem);
-            text-shadow: 0 0 22px rgba(199, 58, 70, 0.75);
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            text-shadow: 0 0 20px rgba(199, 58, 70, 0.7);
         }
         .card-front {
             background: rgba(0, 0, 0, 0.8);
             transform: rotateY(180deg);
             border: 1px solid rgba(255, 255, 255, 0.18);
-            padding: 4px;
+            padding: 3px;
         }
         .match-card.red .card-front {
             border-color: #c73a46;
-            box-shadow: 0 0 14px rgba(199, 58, 70, 0.4);
+            box-shadow: 0 0 12px rgba(199, 58, 70, 0.4);
         }
         .match-card.green .card-front {
             border-color: #5a9e44;
-            box-shadow: 0 0 14px rgba(90, 158, 68, 0.4);
+            box-shadow: 0 0 12px rgba(90, 158, 68, 0.4);
         }
         .match-card.gold .card-front {
             border-color: #c49a5c;
-            box-shadow: 0 0 14px rgba(196, 154, 92, 0.4);
+            box-shadow: 0 0 12px rgba(196, 154, 92, 0.4);
         }
         .card-front img {
             max-width: 80%;
@@ -811,13 +851,13 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0);
-            font-size: clamp(1.4rem, 4vw, 2.4rem);
+            font-size: clamp(1.2rem, 3.5vw, 2rem);
             font-weight: 700;
             color: #fff;
             pointer-events: none;
             z-index: 30;
             opacity: 0;
-            text-shadow: 0 0 35px rgba(0, 0, 0, 0.85);
+            text-shadow: 0 0 30px rgba(0, 0, 0, 0.85);
         }
         .win-message.show {
             animation: popIn 0.7s cubic-bezier(0.34, 1.3, 0.64, 1) forwards;
@@ -836,10 +876,10 @@
         /* ===== TOP 10 BUTTON ===== */
         .top10-toggle-btn {
             font-family: 'Fredoka One', cursive;
-            padding: 6px 16px;
-            font-size: 0.75rem;
+            padding: 4px 14px;
+            font-size: 0.68rem;
             font-weight: 700;
-            border-radius: 28px;
+            border-radius: 22px;
             cursor: pointer;
             backdrop-filter: blur(10px);
             background: rgba(199, 58, 70, 0.25);
@@ -848,104 +888,107 @@
             flex-shrink: 0;
             transition: 0.3s;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
-            letter-spacing: 0.05em;
+            letter-spacing: 0.04em;
+            z-index: 5;
         }
         .top10-toggle-btn:hover {
             background: rgba(199, 58, 70, 0.45);
-            box-shadow: 0 0 20px rgba(199, 58, 70, 0.5);
+            box-shadow: 0 0 18px rgba(199, 58, 70, 0.5);
         }
         .top10-toggle-btn.active-leader {
             background: var(--apple-red-muted);
-            box-shadow: 0 0 24px rgba(199, 58, 70, 0.6);
+            box-shadow: 0 0 22px rgba(199, 58, 70, 0.6);
         }
 
-        /* ===== LEADERBOARD PANEL ===== */
+        /* ===== LEADERBOARD PANEL (Overlay on grid) ===== */
         .leaderboard-panel {
-            width: 100%;
-            max-width: var(--grid-max-w);
-            background: rgba(18, 8, 11, 0.85);
-            backdrop-filter: blur(14px);
+            position: absolute;
+            inset: 0;
+            background: rgba(18, 8, 11, 0.94);
+            backdrop-filter: blur(16px);
             border-radius: 18px;
-            border: 1.5px solid rgba(199, 58, 70, 0.35);
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6), 0 0 40px rgba(199, 58, 70, 0.2);
+            border: 2px solid rgba(199, 58, 70, 0.5);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), 0 0 50px rgba(199, 58, 70, 0.3);
             overflow: hidden;
-            flex-shrink: 0;
+            z-index: 25;
             transition: all 0.4s cubic-bezier(0.34, 1.3, 0.64, 1);
-            max-height: 0;
             opacity: 0;
-            margin-top: 0;
+            visibility: hidden;
             pointer-events: none;
+            display: flex;
+            flex-direction: column;
         }
         .leaderboard-panel.open {
-            max-height: 500px;
             opacity: 1;
-            margin-top: 4px;
+            visibility: visible;
             pointer-events: auto;
         }
         .leaderboard-header {
-            padding: 0.6rem 1rem;
+            padding: 0.5rem 0.8rem;
             text-align: center;
-            border-bottom: 1px solid rgba(199, 58, 70, 0.3);
-            background: linear-gradient(180deg, rgba(199, 58, 70, 0.2), transparent);
+            border-bottom: 1px solid rgba(199, 58, 70, 0.4);
+            background: linear-gradient(180deg, rgba(199, 58, 70, 0.22), transparent);
+            flex-shrink: 0;
         }
         .leaderboard-header h3 {
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: #fff;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.05em;
             text-shadow: 0 0 14px rgba(255, 255, 255, 0.4);
         }
         .leaderboard-list {
             list-style: none;
-            padding: 0.4rem 0.6rem;
-            max-height: 280px;
+            padding: 0.3rem 0.5rem;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            flex: 1;
+            min-height: 0;
         }
         .leaderboard-list li {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.45rem 0.6rem;
-            border-radius: 12px;
-            margin-bottom: 3px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            gap: 0.4rem;
+            padding: 0.35rem 0.5rem;
+            border-radius: 10px;
+            margin-bottom: 2px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             transition: 0.3s;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: #fff;
         }
         .leaderboard-list li.top-1 {
-            background: rgba(196, 154, 92, 0.18);
-            border-color: rgba(196, 154, 92, 0.5);
-            box-shadow: 0 0 14px rgba(196, 154, 92, 0.25);
+            background: rgba(196, 154, 92, 0.2);
+            border-color: rgba(196, 154, 92, 0.6);
+            box-shadow: 0 0 12px rgba(196, 154, 92, 0.3);
         }
         .leaderboard-list li.top-2 {
-            background: rgba(180, 180, 190, 0.14);
-            border-color: rgba(180, 180, 190, 0.4);
+            background: rgba(180, 180, 190, 0.16);
+            border-color: rgba(180, 180, 190, 0.45);
         }
         .leaderboard-list li.top-3 {
-            background: rgba(160, 100, 60, 0.14);
-            border-color: rgba(160, 100, 60, 0.4);
+            background: rgba(160, 100, 60, 0.16);
+            border-color: rgba(160, 100, 60, 0.45);
         }
         .leader-rank {
             font-weight: 700;
-            font-size: 0.9rem;
-            min-width: 28px;
+            font-size: 0.8rem;
+            min-width: 24px;
             text-align: center;
             flex-shrink: 0;
         }
         .leader-rank.r1 {
             color: #f5c842;
-            font-size: 1.1rem;
+            font-size: 0.95rem;
         }
         .leader-rank.r2 {
             color: #c0c0c0;
-            font-size: 1rem;
+            font-size: 0.85rem;
         }
         .leader-rank.r3 {
             color: #cd7f32;
-            font-size: 0.95rem;
+            font-size: 0.8rem;
         }
         .leader-name {
             flex: 1;
@@ -961,11 +1004,12 @@
             text-shadow: 0 0 8px rgba(199, 58, 70, 0.5);
             flex-shrink: 0;
         }
-        .leaderboard-empty {
+        .leaderboard-empty,
+        .leaderboard-error {
             text-align: center;
-            padding: 1.2rem;
+            padding: 1rem;
             color: var(--text-muted);
-            font-size: 0.8rem;
+            font-size: 0.7rem;
         }
 
         /* ===== NAME INPUT MODAL ===== */
@@ -989,60 +1033,60 @@
             background: rgba(22, 10, 14, 0.95);
             backdrop-filter: blur(20px);
             border-radius: 20px;
-            padding: 1.5rem 1.2rem;
+            padding: 1.3rem 1rem;
             border: 2px solid var(--apple-red-soft);
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 60px rgba(199, 58, 70, 0.4);
             text-align: center;
             width: 90%;
-            max-width: 380px;
+            max-width: 360px;
             z-index: 61;
         }
         .name-modal h3 {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: #fff;
-            margin-bottom: 0.3rem;
-            text-shadow: 0 0 18px rgba(255, 255, 255, 0.5);
+            margin-bottom: 0.2rem;
+            text-shadow: 0 0 16px rgba(255, 255, 255, 0.5);
         }
         .name-modal .final-score {
-            font-size: 2rem;
+            font-size: 1.7rem;
             font-weight: 700;
             color: var(--gold-accent);
-            text-shadow: 0 0 20px rgba(196, 154, 92, 0.6);
-            margin-bottom: 0.8rem;
+            text-shadow: 0 0 18px rgba(196, 154, 92, 0.6);
+            margin-bottom: 0.6rem;
         }
         .name-modal input {
             width: 100%;
-            padding: 0.7rem 1rem;
-            border-radius: 28px;
+            padding: 0.6rem 0.8rem;
+            border-radius: 24px;
             border: 1.5px solid rgba(255, 255, 255, 0.3);
             background: rgba(255, 255, 255, 0.06);
             color: #fff;
             font-family: 'Fredoka One', cursive;
-            font-size: 1rem;
+            font-size: 0.9rem;
             text-align: center;
             outline: none;
-            margin-bottom: 0.8rem;
+            margin-bottom: 0.6rem;
             transition: 0.3s;
         }
         .name-modal input:focus {
             border-color: var(--apple-red-soft);
-            box-shadow: 0 0 20px rgba(199, 58, 70, 0.4);
+            box-shadow: 0 0 18px rgba(199, 58, 70, 0.4);
         }
         .name-modal input::placeholder {
             color: rgba(255, 255, 255, 0.35);
         }
         .name-modal .modal-btn-row {
             display: flex;
-            gap: 0.6rem;
+            gap: 0.5rem;
             justify-content: center;
             flex-wrap: wrap;
         }
         .name-modal .modal-btn {
             font-family: 'Fredoka One', cursive;
-            padding: 0.5rem 1.4rem;
-            border-radius: 28px;
+            padding: 0.45rem 1.2rem;
+            border-radius: 24px;
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.78rem;
             cursor: pointer;
             border: none;
             transition: 0.3s;
@@ -1051,7 +1095,7 @@
         .modal-btn.save-btn {
             background: var(--apple-red-muted);
             color: #fff;
-            box-shadow: 0 4px 16px rgba(184, 48, 60, 0.5);
+            box-shadow: 0 4px 14px rgba(184, 48, 60, 0.5);
         }
         .modal-btn.save-btn:hover {
             background: var(--apple-red-soft);
@@ -1067,19 +1111,19 @@
 
         .btn-back {
             font-family: 'Fredoka One', cursive;
-            padding: 6px 20px;
-            font-size: 0.8rem;
+            padding: 4px 16px;
+            font-size: 0.68rem;
             font-weight: 600;
             text-transform: uppercase;
-            border-radius: 28px;
+            border-radius: 22px;
             cursor: pointer;
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(255, 255, 255, 0.14);
             color: rgba(255, 255, 255, 0.75);
-            margin-top: 2px;
             flex-shrink: 0;
             transition: 0.3s;
+            z-index: 5;
         }
         .btn-back:hover {
             background: rgba(255, 255, 255, 0.12);
@@ -1088,160 +1132,68 @@
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 900px) {
-            #hubScreen {
-                overflow-y: auto;
-                overflow-x: hidden;
-                justify-content: flex-start;
-                -webkit-overflow-scrolling: touch;
-            }
-            #gameScreen {
-                overflow-y: auto;
-                overflow-x: hidden;
-                -webkit-overflow-scrolling: touch;
-                justify-content: flex-start;
-                align-items: center;
-            }
             .hub-wrapper {
-                justify-content: flex-start;
-                flex: none;
-                min-height: auto;
-                gap: 0.6rem;
-                padding: 0.6rem 0.5rem 2rem 0.5rem;
+                justify-content: center;
+                flex: 1;
+                min-height: 0;
+                gap: 0.4rem;
+                padding: 0.4rem 0.4rem 0.6rem 0.4rem;
             }
             .cards-stage {
                 flex-direction: column;
-                gap: 0.8rem;
-                flex: none;
-                height: auto;
-                min-height: auto;
+                gap: 0.5rem;
+                flex: 1;
+                min-height: 0;
             }
             .card-link {
                 max-width: 100%;
                 min-width: unset;
-                flex: none;
+                flex: 1;
+                min-height: 0;
+            }
+            .card {
+                padding: 0.5rem 0.6rem 0.7rem;
+            }
+            .card-graphic-wrap {
+                max-height: 38vh;
+                margin-bottom: 0.2rem;
+            }
+            .card-title {
+                font-size: 0.9rem;
+            }
+            .card-desc {
+                font-size: 0.65rem;
+                margin-bottom: 0.25rem;
+            }
+            .card-btn {
+                padding: 0.35rem 0.8rem;
+                font-size: 0.65rem;
+            }
+            .card-dots .dot {
+                width: 7px;
+                height: 7px;
             }
             .global-logo {
-                width: 56px;
-                height: 56px;
-                top: 8px;
-                left: 10px;
-            }
-            .hub-title {
-                font-size: 1.8rem;
-            }
-            :root {
-                --grid-max-w: min(440px, 82vmin);
-            }
-            .grid-frame {
-                padding: 6px;
-                border-radius: 18px;
-            }
-            .card-grid {
-                gap: 5px;
-            }
-            .card-back::after {
-                font-size: clamp(1.3rem, 4.5vw, 1.8rem);
-            }
-            .info-item {
-                padding: 3px 10px;
-                font-size: 0.7rem;
-            }
-            .info-item .emoji-big {
-                font-size: 0.85rem;
-            }
-            .game-banner-img {
-                max-height: 14vh;
-            }
-            .game-wrapper {
-                gap: clamp(2px, 0.6vh, 6px);
-                padding: clamp(4px, 1vh, 8px) 0.8rem clamp(16px, 3vh, 20px) 0.8rem;
-                flex: 0 0 auto;
-                height: auto;
-                justify-content: flex-start;
-            }
-            .win-message {
-                font-size: clamp(1.2rem, 3.8vw, 1.8rem);
-            }
-            .leaderboard-panel.open {
-                max-height: 400px;
-            }
-            .leaderboard-list {
-                max-height: 200px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            #hubScreen {
-                overflow-y: auto;
-                overflow-x: hidden;
-                justify-content: flex-start;
-                -webkit-overflow-scrolling: touch;
-            }
-            #gameScreen {
-                overflow-y: auto;
-                overflow-x: hidden;
-                -webkit-overflow-scrolling: touch;
-                justify-content: flex-start;
-                align-items: center;
-            }
-            .global-logo {
-                width: 44px;
-                height: 44px;
+                width: 100px;
+                height: 100px;
                 top: 6px;
                 left: 8px;
-            }
-            .hub-wrapper {
-                justify-content: flex-start;
-                flex: none;
-                min-height: auto;
-                gap: 0.5rem;
-                padding: 0.5rem 0.4rem 2.2rem 0.4rem;
-            }
-            .cards-stage {
-                flex-direction: column;
-                gap: 0.7rem;
-                flex: none;
-                height: auto;
-                min-height: auto;
-                padding: 0 0.3rem;
-            }
-            .card-link {
-                max-width: 100%;
-                min-width: unset;
-                flex: none;
             }
             .hub-title {
                 font-size: 1.4rem;
             }
-            .ca-line {
-                font-size: 0.7rem;
-                padding: 0.25rem 0.8rem;
-            }
-            .ca-line .ca-text {
-                font-size: 0.65rem;
-            }
-            .card-title {
-                font-size: 1.1rem;
-            }
-            .card-desc {
-                font-size: 0.7rem;
-            }
-            .card-btn {
-                padding: 0.4rem 1rem;
-                font-size: 0.75rem;
-            }
             :root {
-                --grid-max-w: min(340px, 80vmin);
+                --grid-max-w: min(400px, 78vmin);
             }
             .grid-frame {
-                padding: 4px;
+                padding: 5px;
                 border-radius: 16px;
             }
             .card-grid {
-                gap: 3px;
+                gap: 4px;
             }
             .card-back::after {
-                font-size: clamp(1rem, 4vw, 1.4rem);
+                font-size: clamp(1rem, 3.5vw, 1.5rem);
             }
             .info-item {
                 padding: 2px 8px;
@@ -1251,159 +1203,85 @@
                 font-size: 0.7rem;
             }
             .game-banner-img {
-                max-height: 10vh;
-            }
-            .match-instruction {
-                font-size: 0.7rem;
-            }
-            .tracker-dot {
-                width: 12px;
-                height: 12px;
-            }
-            .btn-back {
-                padding: 4px 14px;
-                font-size: 0.65rem;
-            }
-            .stats-grid {
-                gap: 0.4rem;
-            }
-            .stat-row {
-                padding: 0.4rem 0.6rem;
-                min-height: 50px;
-            }
-            .stat-row .stat-label {
-                font-size: 0.6rem;
-            }
-            .stat-row .stat-value {
-                font-size: 0.9rem;
-            }
-            .mcap-bar-wrap {
-                padding: 0.3rem 0.5rem 0.4rem;
-            }
-            .mcap-bar-label {
-                font-size: 0.6rem;
-            }
-            .mcap-bar {
-                height: 10px;
+                max-height: 8vh;
             }
             .game-wrapper {
-                gap: clamp(2px, 0.5vh, 4px);
-                padding: clamp(3px, 0.7vh, 5px) 0.5rem clamp(14px, 2.5vh, 18px) 0.5rem;
-                flex: 0 0 auto;
-                height: auto;
-                justify-content: flex-start;
-                max-width: 100%;
+                gap: clamp(1px, 0.4vh, 3px);
+                padding: clamp(3px, 0.7vh, 6px) 0.6rem clamp(6px, 1.5vh, 10px) 0.6rem;
             }
             .win-message {
-                font-size: clamp(1rem, 3.5vw, 1.6rem);
+                font-size: clamp(1rem, 3vw, 1.5rem);
             }
-            .info-row {
-                max-width: 100%;
-                gap: 4px;
-            }
-            .info-item {
-                padding: 2px 7px;
-                font-size: 0.55rem;
-            }
-            .info-item .emoji-big {
-                font-size: 0.65rem;
-            }
-            .top10-toggle-btn {
-                padding: 4px 12px;
-                font-size: 0.65rem;
-            }
-            .leaderboard-panel.open {
-                max-height: 340px;
-            }
-            .leaderboard-list {
-                max-height: 170px;
-            }
-            .leaderboard-header h3 {
-                font-size: 0.85rem;
-            }
-            .leaderboard-list li {
-                font-size: 0.7rem;
-                padding: 0.35rem 0.5rem;
-            }
-            .name-modal {
-                padding: 1.2rem 0.9rem;
-            }
-            .name-modal h3 {
-                font-size: 1rem;
-            }
-            .name-modal .final-score {
-                font-size: 1.5rem;
-            }
-            .name-modal input {
-                font-size: 0.85rem;
-                padding: 0.5rem 0.8rem;
-            }
-        }
-
-        @media (max-height: 700px) {
-            #gameScreen {
-                justify-content: flex-start;
-                align-items: center;
-                overflow-y: auto;
-            }
-            .game-wrapper {
-                gap: clamp(1px, 0.5vh, 4px);
-                padding: clamp(2px, 0.6vh, 5px) 0.8rem clamp(10px, 2vh, 14px) 0.8rem;
-                flex: 0 0 auto;
-                height: auto;
-                justify-content: flex-start;
-            }
-            .game-banner-img {
-                max-height: 9vh;
-            }
-            .match-instruction {
-                font-size: clamp(0.65rem, 2vw, 0.95rem);
-            }
-            .info-item {
-                padding: 2px 10px;
-                font-size: 0.65rem;
-            }
-            :root {
-                --grid-max-w: min(420px, 72vmin);
-            }
-            .grid-frame {
-                padding: 4px;
+            .leaderboard-panel {
                 border-radius: 16px;
             }
-            .card-grid {
-                gap: 3px;
+            .leaderboard-header h3 {
+                font-size: 0.75rem;
             }
-            .btn-back {
-                padding: 3px 14px;
-                font-size: 0.65rem;
-                margin-top: 1px;
-            }
-            .tracker-dot {
-                width: 12px;
-                height: 12px;
-            }
-            .card-back::after {
-                font-size: clamp(1rem, 3.5vw, 1.5rem);
-            }
-            .leaderboard-panel.open {
-                max-height: 300px;
-            }
-            .leaderboard-list {
-                max-height: 140px;
+            .leaderboard-list li {
+                font-size: 0.62rem;
+                padding: 0.28rem 0.4rem;
             }
         }
 
-        @media (max-height: 500px) {
-            #gameScreen {
-                justify-content: flex-start;
-                align-items: center;
-                overflow-y: auto;
+        @media (max-width: 480px) {
+            .global-logo {
+                width: 70px;
+                height: 70px;
+                top: 4px;
+                left: 6px;
             }
-            .game-banner-img {
-                max-height: 7vh;
+            .hub-wrapper {
+                gap: 0.3rem;
+                padding: 0.3rem 0.3rem 0.5rem 0.3rem;
+            }
+            .cards-stage {
+                gap: 0.4rem;
+                padding: 0 0.2rem;
+            }
+            .card-link {
+                max-width: 100%;
+                min-width: unset;
+                flex: 1;
+                min-height: 0;
+            }
+            .card {
+                padding: 0.4rem 0.5rem 0.5rem;
+                border-radius: 18px;
+            }
+            .card-graphic-wrap {
+                max-height: 28vh;
+                margin-bottom: 0.15rem;
+                border-radius: 12px;
+            }
+            .card-title {
+                font-size: 0.78rem;
+            }
+            .card-desc {
+                font-size: 0.58rem;
+                margin-bottom: 0.2rem;
+            }
+            .card-btn {
+                padding: 0.3rem 0.7rem;
+                font-size: 0.58rem;
+            }
+            .card-dots .dot {
+                width: 6px;
+                height: 6px;
+                gap: 4px;
+            }
+            .hub-title {
+                font-size: 1.1rem;
+            }
+            .ca-line {
+                font-size: 0.6rem;
+                padding: 0.2rem 0.6rem;
+            }
+            .ca-line .ca-text {
+                font-size: 0.52rem;
             }
             :root {
-                --grid-max-w: min(300px, 60vmin);
+                --grid-max-w: min(320px, 76vmin);
             }
             .grid-frame {
                 padding: 3px;
@@ -1412,57 +1290,170 @@
             .card-grid {
                 gap: 2px;
             }
+            .card-back::after {
+                font-size: clamp(0.8rem, 3vw, 1.1rem);
+            }
             .info-item {
-                padding: 1px 8px;
+                padding: 2px 6px;
                 font-size: 0.5rem;
             }
             .info-item .emoji-big {
-                font-size: 0.55rem;
+                font-size: 0.6rem;
+            }
+            .game-banner-img {
+                max-height: 7vh;
             }
             .match-instruction {
+                font-size: 0.6rem;
+            }
+            .tracker-dot {
+                width: 10px;
+                height: 10px;
+                border-width: 1.5px;
+            }
+            .btn-back {
+                padding: 3px 10px;
                 font-size: 0.55rem;
+            }
+            .stats-grid {
+                gap: 0.25rem;
+            }
+            .stat-row {
+                padding: 0.3rem 0.4rem;
+                min-height: 38px;
+                border-radius: 10px;
+            }
+            .stat-row .stat-label {
+                font-size: 0.5rem;
+            }
+            .stat-row .stat-value {
+                font-size: 0.7rem;
+            }
+            .mcap-bar-wrap {
+                padding: 0.25rem 0.4rem 0.3rem;
+                border-radius: 10px;
+            }
+            .mcap-bar-label {
+                font-size: 0.52rem;
+            }
+            .mcap-bar {
+                height: 7px;
+            }
+            .game-wrapper {
+                gap: clamp(1px, 0.3vh, 2px);
+                padding: clamp(2px, 0.5vh, 4px) 0.4rem clamp(4px, 1vh, 8px) 0.4rem;
+            }
+            .win-message {
+                font-size: clamp(0.8rem, 2.8vw, 1.2rem);
+            }
+            .info-row {
+                gap: 3px;
+            }
+            .top10-toggle-btn {
+                padding: 3px 10px;
+                font-size: 0.55rem;
+            }
+            .leaderboard-header h3 {
+                font-size: 0.7rem;
+            }
+            .leaderboard-list li {
+                font-size: 0.55rem;
+                padding: 0.22rem 0.35rem;
+            }
+            .leader-rank {
+                font-size: 0.65rem;
+                min-width: 18px;
+            }
+            .name-modal {
+                padding: 1rem 0.7rem;
+            }
+            .name-modal h3 {
+                font-size: 0.9rem;
+            }
+            .name-modal .final-score {
+                font-size: 1.3rem;
+            }
+            .name-modal input {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.6rem;
+            }
+        }
+
+        @media (max-height: 650px) {
+            #gameScreen {
+                justify-content: center;
+                overflow: hidden;
+            }
+            .game-wrapper {
+                gap: clamp(0px, 0.3vh, 2px);
+                padding: clamp(1px, 0.4vh, 3px) 0.5rem clamp(3px, 0.8vh, 6px) 0.5rem;
+            }
+            .game-banner-img {
+                max-height: 6vh;
+            }
+            .match-instruction {
+                font-size: clamp(0.5rem, 1.5vw, 0.7rem);
+            }
+            .info-item {
+                padding: 1px 7px;
+                font-size: 0.5rem;
+            }
+            :root {
+                --grid-max-w: min(340px, 62vmin);
+            }
+            .grid-frame {
+                padding: 2px;
+                border-radius: 12px;
+            }
+            .card-grid {
+                gap: 2px;
+            }
+            .btn-back {
+                padding: 2px 10px;
+                font-size: 0.5rem;
             }
             .tracker-dot {
                 width: 9px;
                 height: 9px;
                 border-width: 1.5px;
             }
-            .btn-back {
-                padding: 2px 10px;
-                font-size: 0.5rem;
-            }
             .card-back::after {
-                font-size: clamp(0.8rem, 3vw, 1.1rem);
+                font-size: clamp(0.7rem, 2.5vw, 1rem);
             }
             .global-logo {
-                width: 36px;
-                height: 36px;
-                top: 4px;
-                left: 6px;
-            }
-            .game-wrapper {
-                gap: clamp(1px, 0.4vh, 2px);
-                padding: clamp(1px, 0.5vh, 3px) 0.5rem clamp(8px, 1.5vh, 10px) 0.5rem;
-                flex: 0 0 auto;
-                height: auto;
-                justify-content: flex-start;
+                width: 55px;
+                height: 55px;
+                top: 3px;
+                left: 5px;
             }
             .win-message {
-                font-size: clamp(0.8rem, 3vw, 1.2rem);
-            }
-            .leaderboard-panel.open {
-                max-height: 220px;
-            }
-            .leaderboard-list {
-                max-height: 100px;
+                font-size: clamp(0.7rem, 2.5vw, 1rem);
             }
             .leaderboard-header h3 {
-                font-size: 0.7rem;
-                padding: 0.3rem;
+                font-size: 0.6rem;
+                padding: 0.25rem;
+            }
+            .leaderboard-list li {
+                font-size: 0.5rem;
+                padding: 0.18rem 0.3rem;
             }
             .top10-toggle-btn {
-                padding: 3px 10px;
-                font-size: 0.55rem;
+                padding: 2px 8px;
+                font-size: 0.48rem;
+            }
+            .card-dots .dot {
+                width: 5px;
+                height: 5px;
+            }
+            .card-title {
+                font-size: 0.7rem;
+            }
+            .card-desc {
+                font-size: 0.5rem;
+            }
+            .card-btn {
+                padding: 0.25rem 0.6rem;
+                font-size: 0.5rem;
             }
         }
     </style>
@@ -1480,7 +1471,6 @@
 
     <img class="global-logo" src="https://i.postimg.cc/3xByZMxY/gato1.png" alt="Logo" loading="eager" fetchpriority="high" id="globalLogo" />
 
-    <!-- NAME INPUT MODAL -->
     <div class="name-modal-overlay" id="nameModalOverlay">
         <div class="name-modal">
             <h3>🏆 New High Score! 🏆</h3>
@@ -1496,7 +1486,7 @@
     <div id="hubScreen" class="screen active">
         <div class="hub-wrapper">
             <div class="title-container">
-                <h2 class="hub-title">🍎🐱 <span class="red-accent">APPLE</span> <span class="green-accent">CAT</span></h2>
+                <h2 class="hub-title"><span class="red-accent">APPLE</span> 🍎 🐱 <span class="green-accent">CAT</span></h2>
                 <div class="ca-line" id="caLine" title="Click to copy CA">
                     <span class="ca-prefix">CA:</span>
                     <span class="ca-text">66R44YgXe6ZbxRmDiBqkQ5t6yHu72isuE8BbS6u684fu</span>
@@ -1511,6 +1501,11 @@
                             <img src="https://i.postimg.cc/wxbsSk6q/Chat-GPT-Image-13-jul-2026-06-38-35-p-m-(1).png" alt="Game" loading="lazy" />
                             <div class="card-graphic-leaf cg1"></div>
                             <div class="card-graphic-leaf cg2"></div>
+                        </div>
+                        <div class="card-dots">
+                            <span class="dot dot-gold"></span>
+                            <span class="dot dot-green"></span>
+                            <span class="dot dot-red"></span>
                         </div>
                         <h3 class="card-title">APPLE CAT RAID</h3>
                         <p class="card-desc">MATCH 3 OF THE SAME</p>
@@ -1541,7 +1536,12 @@
                         <div class="mcap-bar-wrap">
                             <div class="mcap-bar-label"><span>👑 MCAP</span><span id="mcapText">$0</span></div>
                             <div class="mcap-bar"><div class="mcap-fill" id="mcapFill" style="width:0%"></div></div>
-                            <div class="mcap-bar-label" style="justify-content:flex-end;font-size:0.65rem;margin-top:0.25rem;margin-bottom:0;opacity:0.75;"><span>Goal: $100k</span></div>
+                            <div class="mcap-bar-label" style="justify-content:flex-end;font-size:0.55rem;margin-top:0.2rem;margin-bottom:0;opacity:0.75;"><span>Goal: $100k</span></div>
+                        </div>
+                        <div class="card-dots">
+                            <span class="dot dot-gold"></span>
+                            <span class="dot dot-green"></span>
+                            <span class="dot dot-red"></span>
                         </div>
                         <a class="card-btn chart-btn" href="https://dexscreener.com/solana/5ahH4QUNr3d6YmqoKnuJYqKbATAHDBaYRSk8Fa5f8sdY" target="_blank" rel="noopener">📈 DexScreener</a>
                     </div>
@@ -1552,6 +1552,11 @@
                             <img src="https://i.postimg.cc/sfk3Qnyp/ezgif-com-gif-maker-(10).gif" alt="GIF" loading="lazy" />
                             <div class="card-graphic-leaf cg1"></div>
                             <div class="card-graphic-leaf cg2"></div>
+                        </div>
+                        <div class="card-dots">
+                            <span class="dot dot-gold"></span>
+                            <span class="dot dot-green"></span>
+                            <span class="dot dot-red"></span>
                         </div>
                         <h3 class="card-title">🎞️ GIFs</h3>
                         <p class="card-desc">Download & share</p>
@@ -1575,26 +1580,34 @@
                 </div>
                 <div class="info-item"><span class="emoji-big">⭐</span><span class="value" id="scoreDisplay">0</span></div>
             </div>
-            <div class="grid-frame">
-                <div class="card-grid" id="cardGrid"></div>
-                <div class="win-message" id="winMessage"></div>
+            <div class="grid-container">
+                <div class="grid-frame">
+                    <div class="card-grid" id="cardGrid"></div>
+                    <div class="win-message" id="winMessage"></div>
+                </div>
+                <div class="leaderboard-panel" id="leaderboardPanel">
+                    <div class="leaderboard-header">
+                        <h3>🏆 TOP 10 · APPLE CAT RAIDERS</h3>
+                    </div>
+                    <ul class="leaderboard-list" id="leaderboardList">
+                        <li class="leaderboard-empty">Loading scores …</li>
+                    </ul>
+                </div>
             </div>
             <div class="round-tracker" id="roundTracker"></div>
             <button class="top10-toggle-btn" id="top10ToggleBtn">TOP 10 🏆</button>
-            <div class="leaderboard-panel" id="leaderboardPanel">
-                <div class="leaderboard-header">
-                    <h3>🏆 TOP 10 · APPLE CAT RAIDERS</h3>
-                </div>
-                <ul class="leaderboard-list" id="leaderboardList">
-                    <li class="leaderboard-empty">No scores yet — be the first! 🍎</li>
-                </ul>
-            </div>
             <button class="btn-back" id="backToHubBtn">← Back to Hub</button>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         (function() {
+            const SUPABASE_URL = 'https://faoziaawqxettcazbryq.supabase.co';
+            const SUPABASE_ANON_KEY = 'sb_publishable_kmZm7clazKO4SRyMC9oD6g_Zaz1AlDi';
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            const TOP_LIMIT = 10;
+
             const petalCanvas = document.getElementById('petalCanvas');
             const pCtx = petalCanvas.getContext('2d');
             let pW, pH, petals = [];
@@ -1663,8 +1676,6 @@
                     gameScreen.classList.remove('active');
                     hubScreen.classList.add('active');
                     globalLogo.classList.remove('logo-hidden');
-                    hubScreen.scrollTop = 0;
-                    gameScreen.scrollTop = 0;
                     closeLeaderboard();
                 }
             });
@@ -1688,15 +1699,14 @@
                 try {
                     const res = await fetch(API_URL);
                     const data = await res.json();
-                    const pair = (data && Array.isArray(data.pairs) && data.pairs[0]) ? data.pairs[0] :
-                        (data && data.pair ? data.pair : null);
-                    if (!pair) { console.log('No pair data'); return; }
+                    const pair = (data && Array.isArray(data.pairs) && data.pairs[0]) ? data.pairs[0] : (data && data.pair ? data
+                        .pair : null);
+                    if (!pair) { return; }
                     const price = parseFloat(pair.priceUsd) || 0;
                     const change = parseFloat(pair.priceChange && pair.priceChange.h24) || 0;
                     const volume = parseFloat(pair.volume && pair.volume.h24) || 0;
                     const liquidity = parseFloat(pair.liquidity && pair.liquidity.usd) || 0;
                     const mcap = parseFloat(pair.marketCap || pair.fdv) || 0;
-
                     document.getElementById('priceVal').textContent = '$' + price.toFixed(price < 0.01 ? 6 : 4);
                     const changeEl = document.getElementById('changeVal');
                     changeEl.textContent = (change >= 0 ? '+' : '') + change.toFixed(2) + '%';
@@ -1706,7 +1716,7 @@
                     document.getElementById('mcapText').textContent = '$' + formatNumber(mcap);
                     const percent = Math.min((mcap / MCAP_GOAL) * 100, 100);
                     document.getElementById('mcapFill').style.width = Math.max(percent, 1) + '%';
-                } catch (e) { console.log('Stats refresh failed', e); }
+                } catch (e) {}
             }
 
             function formatNumber(num) {
@@ -1733,8 +1743,6 @@
                 globalLogo.classList.add('logo-hidden');
                 closeLeaderboard();
                 initGame();
-                hubScreen.scrollTop = 0;
-                gameScreen.scrollTop = 0;
             });
 
             document.getElementById('backToHubBtn').addEventListener('click', () => {
@@ -1742,13 +1750,8 @@
                 hubScreen.classList.add('active');
                 globalLogo.classList.remove('logo-hidden');
                 closeLeaderboard();
-                hubScreen.scrollTop = 0;
-                gameScreen.scrollTop = 0;
             });
 
-            // ===== LEADERBOARD =====
-            const STORAGE_KEY = 'apple_cat_leaderboard_v1';
-            const MAX_ENTRIES = 10;
             const leaderboardPanel = document.getElementById('leaderboardPanel');
             const leaderboardList = document.getElementById('leaderboardList');
             const top10ToggleBtn = document.getElementById('top10ToggleBtn');
@@ -1760,51 +1763,36 @@
             const saveScoreBtn = document.getElementById('saveScoreBtn');
             const skipScoreBtn = document.getElementById('skipScoreBtn');
 
-            let pendingSaveScore = 0;
             let leaderboardOpen = false;
+            let cachedTopScores = [];
+            let pendingSaveScore = 0;
 
-            function getLeaderboard() {
-                try {
-                    const raw = localStorage.getItem(STORAGE_KEY);
-                    if (!raw) return [];
-                    const data = JSON.parse(raw);
-                    if (!Array.isArray(data)) return [];
-                    return data.filter(e => e && typeof e.name === 'string' && typeof e.score === 'number')
-                        .sort((a, b) => b.score - a.score)
-                        .slice(0, MAX_ENTRIES);
-                } catch (e) {
-                    return [];
-                }
+            async function fetchTopScores(limit = TOP_LIMIT) {
+                const { data, error } = await supabase
+                    .from('scores')
+                    .select('*')
+                    .order('score', { ascending: false })
+                    .limit(limit);
+                if (error) throw error;
+                return data || [];
             }
 
-            function saveLeaderboard(entries) {
-                try {
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries.slice(0, MAX_ENTRIES)));
-                } catch (e) {
-                    console.log('Could not save leaderboard');
-                }
+            async function insertScore(name, score) {
+                const { error } = await supabase
+                    .from('scores')
+                    .insert([{ name: name.trim().slice(0, 60) || 'Anonymous 🐱', score: Math.round(score) }]);
+                if (error) throw error;
             }
 
-            function addScore(name, score) {
-                const nameTrimmed = name.trim() || 'Anonymous 🐱';
-                const entries = getLeaderboard();
-                entries.push({ name: nameTrimmed, score: Math.round(score) });
-                entries.sort((a, b) => b.score - a.score);
-                const trimmed = entries.slice(0, MAX_ENTRIES);
-                saveLeaderboard(trimmed);
-                return trimmed;
-            }
-
-            function renderLeaderboard() {
-                const entries = getLeaderboard();
+            function renderLeaderboard(scores) {
                 leaderboardList.innerHTML = '';
-                if (entries.length === 0) {
+                if (!scores || scores.length === 0) {
                     const li = document.createElement('li');
                     li.className = 'leaderboard-empty';
                     li.textContent = 'No scores yet — be the first! 🍎';
                     leaderboardList.appendChild(li);
                 } else {
-                    entries.forEach((entry, i) => {
+                    scores.forEach((entry, i) => {
                         const li = document.createElement('li');
                         if (i === 0) li.classList.add('top-1');
                         if (i === 1) li.classList.add('top-2');
@@ -1817,24 +1805,42 @@
                         rankSpan.textContent = `#${i + 1}`;
                         const nameSpan = document.createElement('span');
                         nameSpan.className = 'leader-name';
-                        nameSpan.textContent = entry.name;
+                        nameSpan.textContent = entry.name || 'Anonymous';
                         const scoreSpan = document.createElement('span');
                         scoreSpan.className = 'leader-score';
-                        scoreSpan.textContent = entry.score.toLocaleString();
+                        scoreSpan.textContent = Number(entry.score).toLocaleString();
                         li.appendChild(rankSpan);
                         li.appendChild(nameSpan);
                         li.appendChild(scoreSpan);
                         leaderboardList.appendChild(li);
                     });
                 }
-                updateTopScorerDisplay();
+                updateTopScorerDisplay(scores);
             }
 
-            function updateTopScorerDisplay() {
-                const entries = getLeaderboard();
-                if (entries.length > 0) {
-                    const top = entries[0];
-                    topScorerDisplay.textContent = `${top.name} (${top.score.toLocaleString()})`;
+            function renderLoading() {
+                leaderboardList.innerHTML = '<li class="leaderboard-empty">⏳ Loading scores …</li>';
+            }
+
+            function renderError(msg) {
+                leaderboardList.innerHTML = `<li class="leaderboard-error">⚠️ ${msg}</li>`;
+            }
+
+            async function refreshLeaderboard() {
+                renderLoading();
+                try {
+                    const scores = await fetchTopScores();
+                    cachedTopScores = scores;
+                    renderLeaderboard(scores);
+                } catch (err) {
+                    renderError('Could not load scores. Check connection.');
+                }
+            }
+
+            function updateTopScorerDisplay(scores) {
+                if (scores && scores.length > 0) {
+                    const top = scores[0];
+                    topScorerDisplay.textContent = `${top.name} (${Number(top.score).toLocaleString()})`;
                     topScorerInfo.classList.add('top-scorer-highlight');
                 } else {
                     topScorerDisplay.textContent = '---';
@@ -1847,7 +1853,7 @@
                 leaderboardPanel.classList.add('open');
                 top10ToggleBtn.classList.add('active-leader');
                 top10ToggleBtn.textContent = 'TOP 10 ▲';
-                renderLeaderboard();
+                refreshLeaderboard();
             }
 
             function closeLeaderboard() {
@@ -1883,16 +1889,25 @@
                 pendingSaveScore = 0;
             }
 
-            function handleSaveScore() {
+            async function handleSaveScore() {
                 const name = playerNameInput.value.trim() || 'Anonymous 🐱';
                 if (pendingSaveScore > 0) {
-                    addScore(name, pendingSaveScore);
-                    renderLeaderboard();
-                    if (!leaderboardOpen) {
-                        openLeaderboard();
+                    try {
+                        saveScoreBtn.disabled = true;
+                        saveScoreBtn.innerHTML = '⏳ Saving…';
+                        await insertScore(name, pendingSaveScore);
+                        hideNameModal();
+                        await refreshLeaderboard();
+                        if (!leaderboardOpen) openLeaderboard();
+                    } catch (err) {
+                        alert('Failed to save score: ' + err.message);
+                    } finally {
+                        saveScoreBtn.disabled = false;
+                        saveScoreBtn.innerHTML = '💾 Save Score';
                     }
+                } else {
+                    hideNameModal();
                 }
-                hideNameModal();
                 resetGameAfterSave();
             }
 
@@ -1911,25 +1926,24 @@
                 renderGrid();
                 updateHUD();
                 updateTracker();
-                gameScreen.scrollTop = 0;
             }
 
             saveScoreBtn.addEventListener('click', handleSaveScore);
             skipScoreBtn.addEventListener('click', handleSkipScore);
-
             playerNameInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    handleSaveScore();
-                }
+                if (e.key === 'Enter') handleSaveScore();
             });
-
             nameModalOverlay.addEventListener('click', (e) => {
-                if (e.target === nameModalOverlay) {
-                    handleSkipScore();
-                }
+                if (e.target === nameModalOverlay) handleSkipScore();
             });
 
-            // ===== GAME LOGIC =====
+            supabase
+                .channel('scores_channel')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'scores' }, () => {
+                    refreshLeaderboard();
+                })
+                .subscribe();
+
             const IMAGES = {
                 gold: 'https://i.postimg.cc/crXr135V/golden3.png',
                 green: 'https://i.postimg.cc/dLqhK64s/good1.png',
@@ -1938,8 +1952,7 @@
             const POINTS = { gold: 1250, green: 750, red: 450 },
                 TYPE_COLOR = { gold: 'gold', green: 'green', red: 'red' },
                 TOTAL_ROUNDS = 10;
-            let grid, round, totalScore, roundActive, gameOver, roundResults, revealedCount, isProcessing,
-                goldStreak;
+            let grid, round, totalScore, roundActive, gameOver, roundResults, revealedCount, isProcessing, goldStreak;
             const cardGrid = document.getElementById('cardGrid'),
                 roundDisplay = document.getElementById('roundDisplay'),
                 scoreDisplay = document.getElementById('scoreDisplay'),
@@ -2060,14 +2073,23 @@
                 const finalScore = totalScore;
                 winMessage.textContent = `🏆 ${finalScore.toLocaleString()} pts!`;
                 winMessage.className = 'win-message show gold';
-                const entries = getLeaderboard();
-                const isHighScore = entries.length < MAX_ENTRIES || finalScore > (entries[entries.length - 1]?.score ||
-                    0);
-                setTimeout(() => {
+                setTimeout(async () => {
                     winMessage.classList.remove('show', 'gold');
-                    if (isHighScore && finalScore > 0) {
-                        showNameModal(finalScore);
-                    } else {
+                    if (finalScore <= 0) {
+                        resetGameAfterSave();
+                        return;
+                    }
+                    try {
+                        const topScores = await fetchTopScores();
+                        cachedTopScores = topScores;
+                        const isHigh = topScores.length < TOP_LIMIT ||
+                            finalScore > (topScores[topScores.length - 1]?.score || 0);
+                        if (isHigh) {
+                            showNameModal(finalScore);
+                        } else {
+                            resetGameAfterSave();
+                        }
+                    } catch (err) {
                         resetGameAfterSave();
                     }
                 }, 1600);
@@ -2076,7 +2098,6 @@
             function updateHUD() {
                 roundDisplay.textContent = `${Math.min(round,TOTAL_ROUNDS)} / ${TOTAL_ROUNDS}`;
                 scoreDisplay.textContent = totalScore;
-                updateTopScorerDisplay();
             }
 
             function updateTracker() {
@@ -2106,13 +2127,11 @@
                 renderGrid();
                 updateHUD();
                 updateTracker();
-                renderLeaderboard();
-                gameScreen.scrollTop = 0;
                 hideNameModal();
+                refreshLeaderboard();
             }
 
-            // Initialize leaderboard display on load
-            renderLeaderboard();
+            refreshLeaderboard();
         })();
     </script>
 </body>
