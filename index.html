@@ -569,39 +569,13 @@
             min-width: 2%;
         }
 
-        /* ─── CHAT CARD ─── */
-        .chat-card-link {
-            flex: 0 0 100%;
-            max-width: 100%;
-            min-width: unset;
-            cursor: default;
-            margin-top: 0.2rem;
-        }
+        /* ─── CHAT CARD (now a regular card) ─── */
         .chat-card-link .card {
             padding: 0.8rem 0.8rem 0.6rem;
-            min-height: 240px;
-            max-height: 420px;
             display: flex;
             flex-direction: column;
             align-items: stretch;
             text-align: left;
-            cursor: default;
-        }
-        .chat-card-link .card:hover {
-            transform: none;
-            box-shadow: 0 4px 28px rgba(0, 0, 0, 0.55);
-            border-color: var(--border-subtle);
-        }
-        .chat-card-link .card::after {
-            left: 10%;
-            right: 10%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), var(--apple-red-soft),
-                rgba(255, 255, 255, 0.3), transparent);
-        }
-        .chat-card-link .card:hover::after {
-            height: 3px;
-            opacity: 0.8;
         }
 
         .chat-card-header {
@@ -1877,12 +1851,11 @@
             }
         }
 
-        /* ─── DESKTOP: CHAT FULL WIDTH BELOW CARDS ─── */
+        /* ─── DESKTOP: Three equal columns (chat, game, stats) ─── */
         @media (min-width: 901px) {
             .cards-stage {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: 1fr auto;
                 gap: 1.5rem;
                 align-items: stretch;
                 flex: 1;
@@ -1893,68 +1866,34 @@
                 max-width: 100%;
                 min-width: unset;
                 flex: none;
-                grid-row: 1;
-            }
-            .card-link#gameCard {
-                grid-column: 1;
-            }
-            .card-link#statsCard {
-                grid-column: 2;
-            }
-            .card-link#gifCard {
-                grid-column: 3;
-            }
-            .chat-card-link {
-                grid-column: 1 / -1;
-                grid-row: 2;
-                max-width: 100%;
-                margin-top: 0;
-                flex: none;
             }
             .chat-card-link .card {
-                min-height: 200px;
-                max-height: 320px;
-                padding: 0.8rem 1rem 0.6rem;
+                min-height: 240px;
+                max-height: 420px;
             }
             .chat-messages-wrap {
-                max-height: 160px;
-            }
-            .chat-card-link .card:hover {
-                transform: none;
-                box-shadow: 0 4px 28px rgba(0, 0, 0, 0.55);
-                border-color: var(--border-subtle);
-            }
-            .chat-card-link .card::after {
-                left: 5%;
-                right: 5%;
-                height: 2px;
-                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), var(--apple-red-soft),
-                    rgba(255, 255, 255, 0.25), transparent);
-            }
-            .chat-card-link .card:hover::after {
-                height: 3px;
-                opacity: 0.9;
+                max-height: 220px;
             }
         }
 
         @media (min-width: 901px) and (max-height: 700px) {
             .chat-card-link .card {
-                min-height: 150px;
-                max-height: 220px;
+                min-height: 200px;
+                max-height: 320px;
             }
             .chat-messages-wrap {
-                max-height: 100px;
+                max-height: 160px;
             }
         }
 
         @media (min-width: 901px) and (max-height: 500px) {
             .chat-card-link .card {
-                min-height: 110px;
-                max-height: 160px;
+                min-height: 150px;
+                max-height: 220px;
                 padding: 0.4rem 0.6rem 0.3rem;
             }
             .chat-messages-wrap {
-                max-height: 60px;
+                max-height: 100px;
             }
             .chat-msg .msg-text {
                 font-size: 0.7rem;
@@ -2019,6 +1958,23 @@
                 box-shadow: 0 0 28px rgba(90, 158, 68, 0.8), 0 0 60px rgba(90, 158, 68, 0.4);
             }
         }
+
+        /* ─── SPLIT STATS: Top stats, bottom empty ─── */
+        .stats-top {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            flex: 0 0 auto;
+        }
+        .stats-bottom-empty {
+            flex: 1;
+            width: 100%;
+            margin-top: 0.6rem;
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 14px;
+            background: rgba(0, 0, 0, 0.1);
+            min-height: 80px;
+        }
     </style>
 </head>
 <body>
@@ -2070,63 +2026,7 @@
                 </div>
             </div>
             <div class="cards-stage">
-                <!-- Game Card -->
-                <div class="card-link" id="gameCard">
-                    <div class="card">
-                        <div class="card-graphic-wrap">
-                            <img src="https://i.postimg.cc/wxbsSk6q/Chat-GPT-Image-13-jul-2026-06-38-35-p-m-(1).png" alt="Game" loading="lazy" />
-                            <div class="card-graphic-leaf cg1"></div>
-                            <div class="card-graphic-leaf cg2"></div>
-                        </div>
-                        <h3 class="card-title">APPLE CAT RAID</h3>
-                        <p class="card-desc">MATCH 3 OF THE SAME</p>
-                        <button class="card-btn play-btn" id="playBtn">▶ Play Now</button>
-                    </div>
-                </div>
-                <!-- Stats Card -->
-                <div class="card-link" id="statsCard">
-                    <div class="card">
-                        <h3 class="card-title">🍏 TOKEN STATS</h3>
-                        <div class="stats-grid">
-                            <div class="stat-row accent-white">
-                                <span class="stat-label-wrap"><span class="stat-icon">🍎</span><span class="stat-label">Price</span></span>
-                                <span class="stat-value" id="priceVal">$--</span>
-                            </div>
-                            <div class="stat-row accent-leaf">
-                                <span class="stat-label-wrap"><span class="stat-icon">⚡</span><span class="stat-label">24h Change</span></span>
-                                <span class="stat-value stat-change" id="changeVal">--</span>
-                            </div>
-                            <div class="stat-row accent-gold">
-                                <span class="stat-label-wrap"><span class="stat-icon">🔥</span><span class="stat-label">Volume 24h</span></span>
-                                <span class="stat-value" id="volumeVal">--</span>
-                            </div>
-                            <div class="stat-row accent-apple">
-                                <span class="stat-label-wrap"><span class="stat-icon">💧</span><span class="stat-label">Liquidity</span></span>
-                                <span class="stat-value" id="liquidityVal">--</span>
-                            </div>
-                        </div>
-                        <div class="mcap-bar-wrap">
-                            <div class="mcap-bar-label"><span>👑 MCAP</span><span id="mcapText">$0</span></div>
-                            <div class="mcap-bar"><div class="mcap-fill" id="mcapFill" style="width:0%"></div></div>
-                            <div class="mcap-bar-label" style="justify-content:flex-end;font-size:0.65rem;margin-top:0.25rem;margin-bottom:0;opacity:0.75;"><span>Goal: $100k</span></div>
-                        </div>
-                        <a class="card-btn chart-btn" href="https://dexscreener.com/solana/5ahH4QUNr3d6YmqoKnuJYqKbATAHDBaYRSk8Fa5f8sdY" target="_blank" rel="noopener">📈 DexScreener</a>
-                    </div>
-                </div>
-                <!-- GIF Card -->
-                <div class="card-link" id="gifCard">
-                    <div class="card">
-                        <div class="card-graphic-wrap">
-                            <img src="https://i.postimg.cc/sfk3Qnyp/ezgif-com-gif-maker-(10).gif" alt="GIF" loading="lazy" />
-                            <div class="card-graphic-leaf cg1"></div>
-                            <div class="card-graphic-leaf cg2"></div>
-                        </div>
-                        <h3 class="card-title">🎞️ GIFs</h3>
-                        <p class="card-desc">Download & share</p>
-                        <button class="card-btn download-btn" id="downloadGifBtn">⬇ Download GIF</button>
-                    </div>
-                </div>
-                <!-- CHAT CARD (full-width on desktop, regular on mobile) -->
+                <!-- CHAT CARD (first) -->
                 <div class="card-link chat-card-link" id="chatCard">
                     <div class="card">
                         <div class="chat-card-header">
@@ -2150,6 +2050,52 @@
                             <input type="text" id="chatMessageInput" placeholder="Type a message..." maxlength="500" autocomplete="off" />
                             <button class="chat-send-btn" id="chatSendBtn">Send</button>
                         </div>
+                    </div>
+                </div>
+                <!-- Game Card (second) -->
+                <div class="card-link" id="gameCard">
+                    <div class="card">
+                        <div class="card-graphic-wrap">
+                            <img src="https://i.postimg.cc/wxbsSk6q/Chat-GPT-Image-13-jul-2026-06-38-35-p-m-(1).png" alt="Game" loading="lazy" />
+                            <div class="card-graphic-leaf cg1"></div>
+                            <div class="card-graphic-leaf cg2"></div>
+                        </div>
+                        <h3 class="card-title">APPLE CAT RAID</h3>
+                        <p class="card-desc">MATCH 3 OF THE SAME</p>
+                        <button class="card-btn play-btn" id="playBtn">▶ Play Now</button>
+                    </div>
+                </div>
+                <!-- Stats Card (third, split top/bottom) -->
+                <div class="card-link" id="statsCard">
+                    <div class="card">
+                        <div class="stats-top">
+                            <h3 class="card-title">🍏 TOKEN STATS</h3>
+                            <div class="stats-grid">
+                                <div class="stat-row accent-white">
+                                    <span class="stat-label-wrap"><span class="stat-icon">🍎</span><span class="stat-label">Price</span></span>
+                                    <span class="stat-value" id="priceVal">$--</span>
+                                </div>
+                                <div class="stat-row accent-leaf">
+                                    <span class="stat-label-wrap"><span class="stat-icon">⚡</span><span class="stat-label">24h Change</span></span>
+                                    <span class="stat-value stat-change" id="changeVal">--</span>
+                                </div>
+                                <div class="stat-row accent-gold">
+                                    <span class="stat-label-wrap"><span class="stat-icon">🔥</span><span class="stat-label">Volume 24h</span></span>
+                                    <span class="stat-value" id="volumeVal">--</span>
+                                </div>
+                                <div class="stat-row accent-apple">
+                                    <span class="stat-label-wrap"><span class="stat-icon">💧</span><span class="stat-label">Liquidity</span></span>
+                                    <span class="stat-value" id="liquidityVal">--</span>
+                                </div>
+                            </div>
+                            <div class="mcap-bar-wrap">
+                                <div class="mcap-bar-label"><span>👑 MCAP</span><span id="mcapText">$0</span></div>
+                                <div class="mcap-bar"><div class="mcap-fill" id="mcapFill" style="width:0%"></div></div>
+                                <div class="mcap-bar-label" style="justify-content:flex-end;font-size:0.65rem;margin-top:0.25rem;margin-bottom:0;opacity:0.75;"><span>Goal: $100k</span></div>
+                            </div>
+                            <a class="card-btn chart-btn" href="https://dexscreener.com/solana/5ahH4QUNr3d6YmqoKnuJYqKbATAHDBaYRSk8Fa5f8sdY" target="_blank" rel="noopener">📈 DexScreener</a>
+                        </div>
+                        <div class="stats-bottom-empty"></div>
                     </div>
                 </div>
             </div>
@@ -2328,16 +2274,6 @@
             }
             fetchStats();
             setInterval(fetchStats, 8000);
-
-            // ─── DOWNLOAD GIF ─────────────────────────────────────────────
-            document.getElementById('downloadGifBtn').addEventListener('click', () => {
-                const link = document.createElement('a');
-                link.href = 'https://i.postimg.cc/sfk3Qnyp/ezgif-com-gif-maker-(10).gif';
-                link.download = 'apple-cat-raid.gif';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            });
 
             // ─── SCREEN SWITCHING ──────────────────────────────────────────
             document.getElementById('playBtn').addEventListener('click', (e) => {
@@ -2955,7 +2891,6 @@
             } else {
                 chatNameOverlay.classList.add('active');
                 chatNameInput.focus();
-                // load messages in background? we'll let the user join first
             }
 
             // ─── INITIAL LEADERBOARD FETCH ──────────────────────────────
