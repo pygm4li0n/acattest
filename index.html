@@ -6,7 +6,7 @@
     <title>NITRO CHAT // EPIC</title>
     <style>
         /* =========================================================
-           NITRO CHAT – EPIC UI (mobile‑optimized + typing bar)
+           NITRO CHAT – EPIC UI (mobile‑optimized + epic request overlay)
         ========================================================= */
         :root {
             --bg-deep: #040410;
@@ -240,7 +240,7 @@
         .scroll-bottom-btn.visible { display: flex; }
         .scroll-bottom-btn:hover { background: #2a2a48; border-color: var(--accent-cyan); box-shadow: var(--glow-cyan); }
 
-        /* ── Typing indicator (between tabs and messages) ── */
+        /* ── Typing indicator ── */
         .typing-indicator {
             font-size: 2rem;
             color: var(--accent-cyan);
@@ -430,6 +430,39 @@
         }
         .image-preview-remove:hover { background: rgba(255,64,96,0.2); }
 
+        /* ── Epic Request Overlay (big avatar) ── */
+        .request-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85); z-index: 400;
+            display: flex; justify-content: center; align-items: center;
+            backdrop-filter: blur(12px);
+        }
+        .request-card {
+            background: var(--metal-dark); padding: 30px 26px; border-radius: var(--radius-xl);
+            width: 90%; max-width: 360px; text-align: center; border: 1px solid var(--border-glow);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6), var(--glow-purple);
+            animation: modalPop 0.4s ease-out;
+        }
+        @keyframes modalPop { from { opacity: 0; transform: scale(0.8) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .request-avatar {
+            width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 16px;
+            background: #1e1e3a; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            border: 3px solid var(--accent-purple);
+            box-shadow: 0 0 20px rgba(179,71,234,0.5);
+        }
+        .request-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .request-name { font-size: 1.2rem; font-weight: 700; color: #d8d8f0; margin-bottom: 20px; }
+        .request-buttons { display: flex; gap: 12px; justify-content: center; }
+        .request-buttons button {
+            padding: 10px 20px; border-radius: var(--radius-md); font-weight: 700;
+            cursor: pointer; font-size: 0.9rem; border: none; transition: all 0.3s;
+        }
+        .btn-accept { background: var(--accent-cyan); color: #000; }
+        .btn-accept:hover { box-shadow: var(--glow-cyan); }
+        .btn-decline { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; }
+        .btn-decline:hover { background: rgba(255,64,96,0.2); border-color: #ff4060; }
+
         .overlay-full {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8);
             display: flex; justify-content: center; align-items: center; z-index: 300;
@@ -516,10 +549,21 @@
         </div>
     </div>
 
+    <!-- Epic Request Overlay -->
+    <div class="request-overlay hidden" id="requestOverlay">
+        <div class="request-card">
+            <div class="request-avatar" id="requestAvatar"></div>
+            <div class="request-name" id="requestName"></div>
+            <div class="request-buttons">
+                <button class="btn-accept" id="requestAcceptBtn">✅ Accept</button>
+                <button class="btn-decline" id="requestDeclineBtn">❌ Decline</button>
+            </div>
+        </div>
+    </div>
+
     <button class="sidebar-toggle hidden" id="sidebarToggle" title="Users">☰</button>
 
     <div class="app-shell" id="appShell">
-        <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <span class="s-icon">⚡</span>
@@ -535,7 +579,6 @@
             </div>
         </aside>
 
-        <!-- Chat Panel -->
         <main class="chat-panel" id="chatPanel">
             <div class="chat-header-bar">
                 <div class="header-left">
@@ -559,19 +602,15 @@
                     </span>
                 </div>
             </div>
-            <!-- Tabs -->
             <div class="chat-tabs" id="chatTabs">
                 <div class="chat-tab active" data-tab="public">🌐 Public</div>
                 <div class="chat-tab" data-tab="private">🔒 Private</div>
             </div>
             <div class="error-toast" id="errorToast"></div>
-            <!-- Typing indicator bar -->
             <div class="typing-indicator" id="typingIndicator"></div>
-            <!-- Public messages -->
             <div class="messages-container" id="publicMessagesContainer">
                 <div class="empty-chat-hint" id="publicEmptyHint">No messages yet. Spark the conversation ⚡</div>
             </div>
-            <!-- Private messages (hidden by default) -->
             <div class="messages-container hidden" id="privateMessagesContainer">
                 <div class="empty-chat-hint" id="privateEmptyHint">No private messages with this user.</div>
             </div>
@@ -626,7 +665,6 @@
             let avatarCache = {};
             const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-            // DOM
             const publicContainer = document.getElementById('publicMessagesContainer');
             const privateContainer = document.getElementById('privateMessagesContainer');
             const messageInput = document.getElementById('messageInput');
@@ -672,9 +710,15 @@
             const imagePreviewRemove = document.getElementById('imagePreviewRemove');
             const chatTabs = document.getElementById('chatTabs');
             const typingIndicator = document.getElementById('typingIndicator');
+            const requestOverlay = document.getElementById('requestOverlay');
+            const requestAvatar = document.getElementById('requestAvatar');
+            const requestName = document.getElementById('requestName');
+            const requestAcceptBtn = document.getElementById('requestAcceptBtn');
+            const requestDeclineBtn = document.getElementById('requestDeclineBtn');
+            let currentRequestData = null;
 
             let replyingTo = null;
-            let activePrivateChat = null;   // partner username
+            let activePrivateChat = null;
             let currentTab = 'public';
             let onlineUsers = new Map();
             let isConnected = false;
@@ -686,11 +730,9 @@
             let pendingImageUrl = null;
             let profilePicFile = null;
 
-            // Typing broadcast state
-            const typingUsers = new Map();   // username -> { tab, partner, timeoutId }
+            const typingUsers = new Map();
             let typingChannel = null;
 
-            // Accepted private chats (persisted locally)
             let acceptedPrivateChats = new Set(JSON.parse(localStorage.getItem('nitro_accepted_chats') || '[]'));
 
             function saveAcceptedChats() {
@@ -708,7 +750,7 @@
                 } catch (err) {}
             }
 
-            // ── Particles (unchanged) ──
+            // Particles (unchanged)
             const particleCanvas = document.getElementById('particleCanvas');
             const pCtx = particleCanvas.getContext('2d');
             let particles = [];
@@ -765,14 +807,14 @@
             }
             requestAnimationFrame(animateParticles);
 
-            function escapeHtml(text) { const map = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}; return String(text).replace(/[&<>"']/g, m=>map[m]); }
-            function truncateText(text, maxLen=45) { if(!text) return ''; return text.length > maxLen ? text.substring(0,maxLen)+'…' : text; }
-            function showErrorToast(msg) {
+            function escapeHtml(t) { const map = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}; return String(t).replace(/[&<>"']/g, m=>map[m]); }
+            function trunc(t, l=45) { return t && t.length>l ? t.substring(0,l)+'…' : t||''; }
+            function showError(msg) {
                 errorToast.textContent = '⚠️ ' + msg; errorToast.classList.add('visible');
                 clearTimeout(errorToast._timeout);
-                errorToast._timeout = setTimeout(() => { errorToast.classList.remove('visible'); }, 6000);
+                errorToast._timeout = setTimeout(() => errorToast.classList.remove('visible'), 6000);
             }
-            function setConnectionState(state) {
+            function setConnection(state) {
                 isConnected = (state === 'connected');
                 if(state === 'connected') {
                     connDot.style.background = '#4ade80'; connDot.style.boxShadow = '0 0 8px rgba(74,222,128,0.7)';
@@ -835,7 +877,6 @@
                 const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(filename);
                 return urlData.publicUrl;
             }
-
             async function attachChatImage(file) {
                 uploadImgBtn.classList.add('uploading');
                 try {
@@ -845,11 +886,8 @@
                     imagePreviewName.textContent = file.name;
                     imagePreviewRow.classList.remove('hidden');
                     uploadImgBtn.classList.add('has-image');
-                } catch (err) {
-                    showErrorToast('Upload failed: ' + err.message);
-                } finally {
-                    uploadImgBtn.classList.remove('uploading');
-                }
+                } catch (err) { showError('Upload failed: ' + err.message); }
+                finally { uploadImgBtn.classList.remove('uploading'); }
             }
             function clearAttachedImage() {
                 pendingImageUrl = null;
@@ -897,11 +935,8 @@
             async function toggleReaction(messageId, emoji) {
                 const { data:existing } = await supabase.from('message_reactions')
                     .select('id').eq('message_id', messageId).eq('username', username).eq('emoji', emoji).single();
-                if(existing) {
-                    await supabase.from('message_reactions').delete().eq('id', existing.id);
-                } else {
-                    await supabase.from('message_reactions').insert({ message_id:messageId, username, emoji });
-                }
+                if(existing) { await supabase.from('message_reactions').delete().eq('id', existing.id); }
+                else { await supabase.from('message_reactions').insert({ message_id:messageId, username, emoji }); }
             }
 
             function scrollToMessage(msgId) {
@@ -911,9 +946,7 @@
                     target.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     target.classList.add('highlight-flash');
                     setTimeout(() => target.classList.remove('highlight-flash'), 800);
-                } else {
-                    showErrorToast('Original message not found.');
-                }
+                } else { showError('Original message not found.'); }
             }
 
             async function renderMessage(msg, isPrivate = false) {
@@ -934,14 +967,12 @@
                 let innerHTML = '';
                 if(msg.reply_to_username && msg.reply_to_message) {
                     let imageThumb = '';
-                    if (msg.reply_to_image_url) {
-                        imageThumb = `<img src="${escapeHtml(msg.reply_to_image_url)}" alt="replied image" class="reply-image-thumb">`;
-                    }
+                    if (msg.reply_to_image_url) imageThumb = `<img src="${escapeHtml(msg.reply_to_image_url)}" alt="replied image" class="reply-image-thumb">`;
                     innerHTML += `<div class="reply-ref-block" data-reply-to-id="${msg.reply_to_id || ''}">
                         ${imageThumb}
                         <div class="reply-text-content">
                             <span class="r-user">↳ ${escapeHtml(msg.reply_to_username)}</span>
-                            <span class="r-text">"${escapeHtml(truncateText(msg.reply_to_message,55))}"</span>
+                            <span class="r-text">"${escapeHtml(trunc(msg.reply_to_message,55))}"</span>
                         </div>
                     </div>`;
                 }
@@ -991,7 +1022,7 @@
                 if(ref) {
                     replyIndicatorBar.classList.remove('hidden');
                     replyToUserDisp.textContent = '@' + ref.username;
-                    let preview = truncateText(ref.message, 40);
+                    let preview = trunc(ref.message, 40);
                     if (ref.imageUrl) preview = '🖼️ ' + preview;
                     replyPreviewDisp.textContent = '"' + preview + '"';
                     messageInput.focus();
@@ -1033,7 +1064,7 @@
                 if(!tab) return;
                 const tabName = tab.getAttribute('data-tab');
                 if(tabName === 'private' && !activePrivateChat) {
-                    showErrorToast('Select a private chat partner from the sidebar first.');
+                    showError('Select a private chat partner from the sidebar first.');
                     return;
                 }
                 switchTab(tabName);
@@ -1068,7 +1099,7 @@
                     .select('*')
                     .or(`and(from_user.eq.${username},to_user.eq.${partner}),and(from_user.eq.${partner},to_user.eq.${username})`)
                     .order('created_at', { ascending: true });
-                if (error) { showErrorToast('Failed to load private messages'); return; }
+                if (error) { showError('Failed to load private messages'); return; }
                 privateContainer.innerHTML = '';
                 if (data.length === 0) {
                     privateContainer.innerHTML = '<div class="empty-chat-hint">No private messages with this user.</div>';
@@ -1133,6 +1164,32 @@
                 </div>`;
             }
 
+            // Epic request overlay functions
+            function showRequestOverlay(fromUser, requestId) {
+                currentRequestData = { from_user: fromUser, id: requestId };
+                const url = getAvatarURL(fromUser);
+                requestAvatar.innerHTML = url ? `<img src="${escapeHtml(url)}">` : (fromUser[0]?.toUpperCase() || '?');
+                requestName.textContent = `${fromUser} wants to chat privately`;
+                requestOverlay.classList.remove('hidden');
+            }
+            function hideRequestOverlay() {
+                requestOverlay.classList.add('hidden');
+                currentRequestData = null;
+            }
+            requestAcceptBtn.addEventListener('click', async () => {
+                if (!currentRequestData) return;
+                await acceptPrivateRequest(currentRequestData.from_user, currentRequestData.id);
+                hideRequestOverlay();
+            });
+            requestDeclineBtn.addEventListener('click', () => {
+                if (!currentRequestData) return;
+                supabase.from('private_chat_requests').delete().eq('id', currentRequestData.id).then(() => {
+                    pendingPrivateRequests.delete(currentRequestData.from_user);
+                    updateSidebarUI();
+                });
+                hideRequestOverlay();
+            });
+
             async function handlePrivateChatClick(targetUser) {
                 if(acceptedPrivateChats.has(targetUser)) {
                     setActivePrivateChat(targetUser);
@@ -1141,7 +1198,7 @@
                 if(pendingPrivateRequests.has(targetUser)) {
                     const req = pendingPrivateRequests.get(targetUser);
                     if(req.status === 'pending' && req.from_user === targetUser) {
-                        await acceptPrivateRequest(targetUser, req.id);
+                        showRequestOverlay(targetUser, req.id);
                         return;
                     }
                 }
@@ -1154,10 +1211,10 @@
                         to_user: toUser,
                         status: 'pending'
                     });
-                    if(error) { showErrorToast('Request failed: ' + error.message); return; }
-                    showErrorToast('📩 Request sent to ' + toUser);
+                    if(error) { showError('Request failed: ' + error.message); return; }
+                    showError('📩 Request sent to ' + toUser);
                     updateSidebarUI();
-                } catch(err) { showErrorToast('Error: '+err.message); }
+                } catch(err) { showError('Error: '+err.message); }
             }
             async function acceptPrivateRequest(fromUser, requestId) {
                 try {
@@ -1170,8 +1227,8 @@
                     saveAcceptedChats();
                     setActivePrivateChat(fromUser);
                     updateSidebarUI();
-                    showErrorToast('✅ Chat with ' + fromUser + ' active!');
-                } catch(err) { showErrorToast('Accept error: '+err.message); }
+                    showError('✅ Chat with ' + fromUser + ' active!');
+                } catch(err) { showError('Accept error: '+err.message); }
             }
             async function loadPendingRequests() {
                 if(!username) return;
@@ -1200,21 +1257,19 @@
                         if(record.to_user === username && record.status === 'pending') {
                             pendingPrivateRequests.set(record.from_user, {status:'pending', id:record.id, from_user:record.from_user});
                             updateSidebarUI();
-                            showErrorToast('📩 Private request from ' + record.from_user);
+                            fetchAvatars([record.from_user]).then(() => showRequestOverlay(record.from_user, record.id));
                         }
                         if(record.status === 'accepted') {
                             const partner = record.from_user === username ? record.to_user : record.from_user;
                             acceptedPrivateChats.add(partner);
                             saveAcceptedChats();
-                            if (activePrivateChat !== partner) {
-                                setActivePrivateChat(partner);
-                            }
+                            if (activePrivateChat !== partner) setActivePrivateChat(partner);
                         }
                     }).subscribe();
             }
 
             async function loadMessages() {
-                setConnectionState('connecting');
+                setConnection('connecting');
                 try {
                     const { data, error } = await supabase
                         .from('messages')
@@ -1231,10 +1286,10 @@
                         await fetchAvatars(users);
                         data.forEach(msg => renderMessage(msg, false));
                     }
-                    setConnectionState('connected');
+                    setConnection('connected');
                 } catch (err) {
-                    showErrorToast('Load failed: ' + err.message);
-                    setConnectionState('disconnected');
+                    showError('Load failed: ' + err.message);
+                    setConnection('disconnected');
                 }
             }
 
@@ -1245,7 +1300,7 @@
                 sendBtn.disabled = true;
                 const isPrivate = (currentTab === 'private' && activePrivateChat);
                 if (isPrivate && !activePrivateChat) {
-                    showErrorToast('No private partner selected.');
+                    showError('No private partner selected.');
                     sendBtn.disabled = false;
                     return;
                 }
@@ -1276,14 +1331,14 @@
                     clearAttachedImage();
                     stopTyping();
                 } catch (err) {
-                    showErrorToast('Send failed: ' + err.message);
+                    showError('Send failed: ' + err.message);
                 } finally {
                     sendBtn.disabled = false;
                     messageInput.focus();
                 }
             }
 
-            // ── Typing broadcast ──
+            // Typing broadcast
             function startTyping() {
                 if (!username || !typingChannel) return;
                 const tab = currentTab === 'private' && activePrivateChat ? 'private' : 'public';
@@ -1294,7 +1349,6 @@
                     payload: { username, tab, partner }
                 }).then(() => {}).catch(console.warn);
             }
-
             function stopTyping() {
                 if (!username || !typingChannel) return;
                 typingChannel.send({
@@ -1303,13 +1357,9 @@
                     payload: { username }
                 }).then(() => {}).catch(console.warn);
             }
-
             messageInput.addEventListener('input', () => {
-                if (messageInput.value.length > 0) {
-                    startTyping();
-                } else {
-                    stopTyping();
-                }
+                if (messageInput.value.length > 0) startTyping();
+                else stopTyping();
             });
 
             function handleTypingBroadcast(payload) {
@@ -1317,9 +1367,7 @@
                 if (sender === username) return;
 
                 if (event === 'typing') {
-                    if (typingUsers.has(sender)) {
-                        clearTimeout(typingUsers.get(sender).timeoutId);
-                    }
+                    if (typingUsers.has(sender)) clearTimeout(typingUsers.get(sender).timeoutId);
                     const timeoutId = setTimeout(() => {
                         typingUsers.delete(sender);
                         updateTypingIndicator();
@@ -1338,41 +1386,30 @@
                 const typersPublic = [];
                 const typersPrivate = {};
                 typingUsers.forEach((data, user) => {
-                    if (data.tab === 'public') {
-                        typersPublic.push(user);
-                    } else if (data.tab === 'private' && data.partner === username) {
-                        typersPrivate[user] = true;
-                    }
+                    if (data.tab === 'public') typersPublic.push(user);
+                    else if (data.tab === 'private' && data.partner === username) typersPrivate[user] = true;
                 });
 
                 let text = '';
                 const dots = '<span class="typing-dots"><span></span><span></span><span></span></span>';
-
                 if (currentTab === 'public') {
                     if (typersPublic.length === 1) text = `${typersPublic[0]} is typing... ${dots}`;
                     else if (typersPublic.length > 1) text = `Several people are typing... ${dots}`;
                 } else if (currentTab === 'private' && activePrivateChat) {
                     if (typersPrivate[activePrivateChat]) text = `${activePrivateChat} is typing... ${dots}`;
                 }
-
                 typingIndicator.innerHTML = text || '';
             }
 
             function setupTypingChannel() {
                 if (typingChannel) supabase.removeChannel(typingChannel);
-                typingChannel = supabase.channel('typing-broadcast', {
-                    config: { broadcast: { self: false } }
-                });
-                typingChannel.on('broadcast', { event: 'typing' }, (payload) => {
-                    handleTypingBroadcast(payload.payload);
-                });
-                typingChannel.on('broadcast', { event: 'stop_typing' }, (payload) => {
-                    handleTypingBroadcast(payload.payload);
-                });
+                typingChannel = supabase.channel('typing-broadcast', { config: { broadcast: { self: false } } });
+                typingChannel.on('broadcast', { event: 'typing' }, (payload) => handleTypingBroadcast(payload.payload));
+                typingChannel.on('broadcast', { event: 'stop_typing' }, (payload) => handleTypingBroadcast(payload.payload));
                 typingChannel.subscribe();
             }
 
-            // ── Presence ──
+            // Presence
             function setupPresence() {
                 if (presenceChannel) return;
                 if (!username) return;
@@ -1390,7 +1427,7 @@
                             }
                         });
                         updateSidebarUI();
-                        setConnectionState('connected');
+                        setConnection('connected');
                     })
                     .on('presence', { event:'join' }, ({key, newPresences}) => {
                         if(newPresences && newPresences.length>0) {
@@ -1403,11 +1440,10 @@
                     .subscribe(async (status) => {
                         if(status==='SUBSCRIBED') {
                             await presenceChannel.track({ username:username, client_id:clientId, online_at:new Date().toISOString() });
-                            setConnectionState('connected');
+                            setConnection('connected');
                         }
                     });
             }
-
             function reTrackPresence() {
                 if (username && presenceChannel) {
                     presenceChannel.track({ username:username, client_id:clientId, online_at:new Date().toISOString() }).catch(console.warn);
@@ -1419,7 +1455,7 @@
                 realtimeChannel = supabase.channel('public-msgs')
                     .on('postgres_changes', { event:'INSERT', schema:'public', table:'messages' }, payload => {
                         renderMessage(payload.new, false);
-                        setConnectionState('connected');
+                        setConnection('connected');
                     })
                     .subscribe();
 
@@ -1436,7 +1472,7 @@
 
             async function fullReconnect() {
                 refreshBtn.classList.add('spinning');
-                setConnectionState('connecting');
+                setConnection('connecting');
                 subscribeToRealtime();
                 if(username) { setupPresence(); subscribeToPrivateRequests(); await loadPendingRequests(); }
                 await loadMessages();
@@ -1456,9 +1492,7 @@
                         await supabase.from('profiles').upsert({ username: name, avatar_url: url });
                         avatarCache[name] = url;
                         headerAvatar.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;">`;
-                    } catch(err) {
-                        showErrorToast('Avatar upload failed: ' + err.message);
-                    }
+                    } catch(err) { showError('Avatar upload failed: ' + err.message); }
                 } else {
                     headerAvatar.innerHTML = (name[0]||'?').toUpperCase();
                 }
@@ -1470,14 +1504,13 @@
                 setActivePrivateChat(null);
                 switchTab('public');
                 await updateSidebarUI();
-                setupTypingChannel();   // start typing broadcast
+                setupTypingChannel();
             }
 
-            // ── Event listeners ──
+            // Event listeners
             sendBtn.addEventListener('click', sendMessage);
             messageInput.addEventListener('keypress', (e) => { if(e.key==='Enter') sendMessage(); });
             cancelReplyBtn.addEventListener('click', () => setReplyingTo(null));
-            cancelPrivateBtn.addEventListener('click', () => setActivePrivateChat(null));
             refreshBtn.addEventListener('click', fullReconnect);
             uploadImgBtn.addEventListener('click', () => fileInput.click());
             fileInput.addEventListener('change', async () => {
@@ -1514,9 +1547,7 @@
                 if(!file) return;
                 profilePicFile = file;
                 const reader = new FileReader();
-                reader.onload = (ev) => {
-                    profilePicPreview.innerHTML = `<img src="${ev.target.result}" alt="Profile">`;
-                };
+                reader.onload = (ev) => { profilePicPreview.innerHTML = `<img src="${ev.target.result}" alt="Profile">`; };
                 reader.readAsDataURL(file);
             });
 
@@ -1547,7 +1578,7 @@
                 }
             });
 
-            // ── Init ──
+            // Init
             async function init() {
                 if(window.innerWidth<=768) sidebarToggle.classList.remove('hidden');
                 await loadAcceptedChatsFromDB();
@@ -1575,7 +1606,7 @@
                     loadPendingRequests();
                     loadReactions();
                     subscribeToReactions();
-                    setupTypingChannel();   // start typing broadcast
+                    setupTypingChannel();
                 } else {
                     nameOverlay.classList.remove('hidden'); nameInput.focus();
                     subscribeToRealtime();
