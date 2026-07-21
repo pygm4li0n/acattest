@@ -6,7 +6,7 @@
     <title>NITRO CHAT // Epic Full‑Screen</title>
     <style>
         /* =========================================================
-           NITRO CHAT – EPIC UI (estilo completo – same as yours)
+           NITRO CHAT – EPIC UI (completo)
         ========================================================= */
         :root {
             --bg-deep: #040410;
@@ -134,7 +134,7 @@
         .sidebar-toggle {
             display: none; position: absolute; top: 12px; left: 12px; z-index: 30;
             background: var(--metal-dark); border: 1px solid var(--border-glow); color: #fff;
-            width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1.1rem;
+            width: 44px; height: 44px; border-radius: 50%; cursor: pointer; font-size: 1.3rem;
             align-items: center; justify-content: center; box-shadow: 0 0 12px rgba(0,0,0,0.5);
         }
 
@@ -240,6 +240,12 @@
         .scroll-bottom-btn.visible { display: flex; }
         .scroll-bottom-btn:hover { background: #2a2a48; border-color: var(--accent-cyan); box-shadow: var(--glow-cyan); }
 
+        /* ── Typing indicator ── */
+        .typing-indicator {
+            font-size: 0.7rem; color: var(--text-muted); padding: 4px 16px; font-style: italic;
+            min-height: 20px;
+        }
+
         /* ── Highlight for quoted message ── */
         .msg-wrapper.highlight-flash {
             animation: highlightFlash 0.8s ease-out;
@@ -297,12 +303,17 @@
         }
         .msg-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .msg-username { font-weight: 700; font-size: 0.76rem; color: #c0a0f0; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+        .msg-time {
+            font-size: 0.65rem; color: #8a8aaa; margin-left: 6px; font-weight: 400;
+        }
         .msg-text { font-size: 0.9rem; color: #d8d8f2; line-height: 1.4; }
+        .msg-text.deleted { color: #5a5a78; font-style: italic; }
+        .msg-edited { font-size: 0.65rem; color: #8a8aaa; margin-left: 4px; font-style: italic; }
         .msg-image-wrap { margin-top: 8px; border-radius: var(--radius-md); overflow: hidden; cursor: pointer; max-width: 300px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s; }
         .msg-image-wrap:hover { box-shadow: 0 0 20px rgba(0,229,255,0.25); border-color: rgba(0,229,255,0.4); }
         .msg-image-wrap img { display: block; width: 100%; height: auto; max-height: 350px; object-fit: cover; }
 
-        /* ── Reply reference block (con miniatura) ── */
+        /* Reply ref block */
         .reply-ref-block {
             background: rgba(0,229,255,0.05); border-left: 3px solid var(--accent-cyan);
             padding: 6px 8px; border-radius: 0 8px 8px 0; margin-bottom: 6px;
@@ -337,6 +348,21 @@
         }
         .msg-bubble:hover .reply-btn { opacity: 1; }
         .msg-bubble .reply-btn:hover { background: rgba(0,229,255,0.2); border-color: rgba(0,229,255,0.5); color: #fff; box-shadow: 0 0 10px rgba(0,229,255,0.3); }
+
+        /* Message action buttons (edit/delete) */
+        .msg-actions {
+            position: absolute; top: 6px; right: 40px; display: flex; gap: 4px; opacity: 0; transition: opacity 0.2s;
+        }
+        .msg-bubble:hover .msg-actions { opacity: 1; }
+        .msg-action-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); color: #a0a0c0;
+            border-radius: 4px; padding: 2px 6px; font-size: 0.6rem; cursor: pointer;
+        }
+        .msg-action-btn:hover { background: rgba(0,229,255,0.2); border-color: rgba(0,229,255,0.5); color: #fff; }
+        .edit-input {
+            width: 100%; background: #0d0d20; border: 1px solid var(--accent-cyan); color: #e0e0f2; padding: 4px 8px;
+            border-radius: 6px; font-size: 0.85rem; margin-bottom: 4px;
+        }
 
         /* ── Input Area ── */
         .input-area-bar {
@@ -459,7 +485,7 @@
         @media (max-width: 768px) {
             .sidebar { position: fixed; top: 0; left: 0; height: 100%; z-index: 25; transform: translateX(-100%); }
             .sidebar.open { transform: translateX(0); }
-            .sidebar-toggle { display: flex; width: 44px; height: 44px; font-size: 1.3rem; }  /* bigger for easier tap */
+            .sidebar-toggle { display: flex; width: 44px; height: 44px; font-size: 1.3rem; }
             .chat-panel { width: 100%; }
             .msg-wrapper { max-width: 90%; }
             .msg-image-wrap { max-width: 220px; }
@@ -542,6 +568,8 @@
                 <div class="chat-tab" data-tab="private">🔒 Private</div>
             </div>
             <div class="error-toast" id="errorToast"></div>
+            <!-- Typing indicator -->
+            <div class="typing-indicator" id="typingIndicator"></div>
             <!-- Public messages -->
             <div class="messages-container" id="publicMessagesContainer">
                 <div class="empty-chat-hint" id="publicEmptyHint">No messages yet. Spark the conversation ⚡</div>
@@ -646,19 +674,22 @@
             const imagePreviewName = document.getElementById('imagePreviewName');
             const imagePreviewRemove = document.getElementById('imagePreviewRemove');
             const chatTabs = document.getElementById('chatTabs');
+            const typingIndicator = document.getElementById('typingIndicator');
 
             let replyingTo = null;
             let activePrivateChat = null;   // partner username
             let currentTab = 'public';
-            let onlineUsers = new Map();
+            let onlineUsers = new Map();    // key -> { username, typing }
             let isConnected = false;
-            let realtimeChannel = null, presenceChannel = null, privateRequestsChannel = null, privMsgChannel = null, reactionsChannel = null;
+            let realtimeChannel = null, presenceChannel = null, privateRequestsChannel = null, privMsgChannel = null, reactionsChannel = null, privReactionsChannel = null;
             let pendingPrivateRequests = new Map();
             let knownMessageIds = new Set();
-            let messageReactions = {};
+            let messageReactions = {};      // public
+            let privateMessageReactions = {}; // private
             const EMOJIS = ['❤️','😂','😮','😢','😡'];
             let pendingImageUrl = null;
             let profilePicFile = null;
+            let typingTimeout = null;
 
             // ── Particles (unchanged) ──
             const particleCanvas = document.getElementById('particleCanvas');
@@ -744,6 +775,11 @@
                     sidebarStatusText.textContent = 'Connecting…';
                 }
             }
+            function formatTime(isoString) {
+                if (!isoString) return '';
+                const date = new Date(isoString);
+                return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
 
             // ── Avatar helpers ──
             async function fetchAvatars(usernames) {
@@ -813,50 +849,56 @@
                 fileInput.value = '';
             }
 
-            // ── Reactions (public only) ──
-            async function loadReactions() {
-                const { data, error } = await supabase.from('message_reactions').select('*');
-                if(error) return;
-                messageReactions = {};
+            // ── Reactions (public & private) ──
+            async function loadReactions(table, isPrivate = false) {
+                const { data, error } = await supabase.from(table).select('*');
+                if (error) return;
+                const target = isPrivate ? privateMessageReactions : messageReactions;
+                target = {};
                 (data||[]).forEach(r => {
                     const mid = r.message_id;
-                    if(!messageReactions[mid]) messageReactions[mid] = {};
-                    if(!messageReactions[mid][r.emoji]) messageReactions[mid][r.emoji] = { count:0, users:new Set() };
-                    messageReactions[mid][r.emoji].count++;
-                    messageReactions[mid][r.emoji].users.add(r.username);
+                    if (!target[mid]) target[mid] = {};
+                    if (!target[mid][r.emoji]) target[mid][r.emoji] = { count:0, users:new Set() };
+                    target[mid][r.emoji].count++;
+                    target[mid][r.emoji].users.add(r.username);
                 });
-                document.querySelectorAll('.msg-wrapper').forEach(w => updateReactionUI(w));
+                document.querySelectorAll('.msg-wrapper').forEach(w => updateReactionUI(w, isPrivate));
             }
             function subscribeToReactions() {
-                if(reactionsChannel) supabase.removeChannel(reactionsChannel);
-                reactionsChannel = supabase.channel('nitro-reactions')
-                    .on('postgres_changes', { event:'*', schema:'public', table:'message_reactions' }, () => loadReactions())
+                if (reactionsChannel) supabase.removeChannel(reactionsChannel);
+                reactionsChannel = supabase.channel('public-reactions')
+                    .on('postgres_changes', { event:'*', schema:'public', table:'message_reactions' }, () => loadReactions('message_reactions', false))
+                    .subscribe();
+                if (privReactionsChannel) supabase.removeChannel(privReactionsChannel);
+                privReactionsChannel = supabase.channel('private-reactions')
+                    .on('postgres_changes', { event:'*', schema:'public', table:'private_message_reactions' }, () => loadReactions('private_message_reactions', true))
                     .subscribe();
             }
-            function updateReactionUI(wrapper) {
+            function updateReactionUI(wrapper, isPrivate) {
                 const msgId = wrapper.getAttribute('data-msg-id');
                 const bar = wrapper.querySelector('.reactions-bar');
-                if(!bar) return;
-                const reactions = messageReactions[msgId] || {};
+                if (!bar) return;
+                const reactions = (isPrivate ? privateMessageReactions : messageReactions)[msgId] || {};
                 bar.innerHTML = EMOJIS.map(emoji => {
                     const data = reactions[emoji] || { count:0, users:new Set() };
                     const active = data.users.has(username) ? 'active' : '';
-                    return `<button class="reaction-btn ${active}" data-emoji="${emoji}">${emoji} <span class="count">${data.count}</span></button>`;
+                    return `<button class="reaction-btn ${active}" data-emoji="${emoji}">${emoji} ${data.count}</button>`;
                 }).join('');
                 bar.querySelectorAll('.reaction-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        toggleReaction(msgId, btn.dataset.emoji);
+                        toggleReaction(msgId, btn.dataset.emoji, isPrivate);
                     });
                 });
             }
-            async function toggleReaction(messageId, emoji) {
-                const { data:existing } = await supabase.from('message_reactions')
+            async function toggleReaction(messageId, emoji, isPrivate) {
+                const table = isPrivate ? 'private_message_reactions' : 'message_reactions';
+                const { data:existing } = await supabase.from(table)
                     .select('id').eq('message_id', messageId).eq('username', username).eq('emoji', emoji).single();
-                if(existing) {
-                    await supabase.from('message_reactions').delete().eq('id', existing.id);
+                if (existing) {
+                    await supabase.from(table).delete().eq('id', existing.id);
                 } else {
-                    await supabase.from('message_reactions').insert({ message_id:messageId, username, emoji });
+                    await supabase.from(table).insert({ message_id: messageId, username, emoji });
                 }
             }
 
@@ -874,11 +916,11 @@
 
             // ── Render message (public or private) ──
             async function renderMessage(msg, isPrivate = false) {
-                if(knownMessageIds.has(msg.id)) return;
+                if (knownMessageIds.has(msg.id)) return;
                 knownMessageIds.add(msg.id);
                 const container = isPrivate ? privateContainer : publicContainer;
                 const emptyHint = isPrivate ? privateEmptyHint : publicEmptyHint;
-                if(emptyHint) emptyHint.style.display = 'none';
+                if (emptyHint) emptyHint.style.display = 'none';
                 const user = isPrivate ? msg.from_user : msg.username;
                 if (!getAvatarURL(user)) await fetchAvatars([user]);
                 const isOwn = user === username;
@@ -887,9 +929,10 @@
                 wrapper.setAttribute('data-msg-id', msg.id);
                 const bubble = document.createElement('div');
                 bubble.className = 'msg-bubble';
-                if(isPrivate) bubble.classList.add('private-msg');
+                if (isPrivate) bubble.classList.add('private-msg');
                 let innerHTML = '';
-                if(msg.reply_to_username && msg.reply_to_message) {
+                // Reply reference
+                if (msg.reply_to_username && msg.reply_to_message) {
                     let imageThumb = '';
                     if (msg.reply_to_image_url) {
                         imageThumb = `<img src="${escapeHtml(msg.reply_to_image_url)}" alt="replied image" class="reply-image-thumb">`;
@@ -902,18 +945,38 @@
                         </div>
                     </div>`;
                 }
-                innerHTML += `<div class="msg-username"><span class="msg-avatar">${renderAvatarHTML(user)}</span> ${escapeHtml(user)}${isPrivate?' <span style="font-size:0.6rem;opacity:0.6;">🔒</span>':''}</div>`;
-                if(msg.message) innerHTML += `<div class="msg-text">${escapeHtml(msg.message)}</div>`;
-                if(msg.image_url) innerHTML += `<div class="msg-image-wrap" data-img-src="${escapeHtml(msg.image_url)}"><img src="${escapeHtml(msg.image_url)}" alt="shared image" loading="lazy"></div>`;
+                // Username + time
+                innerHTML += `<div class="msg-username"><span class="msg-avatar">${renderAvatarHTML(user)}</span> ${escapeHtml(user)}${isPrivate?' <span style="font-size:0.6rem;opacity:0.6;">🔒</span>':''} <span class="msg-time">${formatTime(msg.created_at)}</span>`;
+                if (msg.edited_at) innerHTML += `<span class="msg-edited">(edited)</span>`;
+                innerHTML += `</div>`;
+                // Message text or deleted placeholder
+                if (msg.is_deleted) {
+                    innerHTML += `<div class="msg-text deleted">Message removed</div>`;
+                } else {
+                    if (msg.message) innerHTML += `<div class="msg-text">${escapeHtml(msg.message)}</div>`;
+                }
+                if (msg.image_url && !msg.is_deleted) {
+                    innerHTML += `<div class="msg-image-wrap" data-img-src="${escapeHtml(msg.image_url)}"><img src="${escapeHtml(msg.image_url)}" alt="shared image" loading="lazy"></div>`;
+                }
+                // Reply button
                 innerHTML += `<button class="reply-btn" data-msg-id="${msg.id}" data-username="${escapeHtml(user)}" data-message="${escapeHtml(msg.message||'')}" data-imageurl="${msg.image_url || ''}">↩ Reply</button>`;
+                // Actions (edit/delete) for own messages
+                if (isOwn && !msg.is_deleted) {
+                    innerHTML += `<div class="msg-actions">
+                        <button class="msg-action-btn edit-btn" data-id="${msg.id}">✎</button>
+                        <button class="msg-action-btn delete-btn" data-id="${msg.id}">✕</button>
+                    </div>`;
+                }
+                // Reactions bar
                 innerHTML += `<div class="reactions-bar"></div>`;
                 bubble.innerHTML = innerHTML;
                 wrapper.appendChild(bubble);
                 container.appendChild(wrapper);
                 container.scrollTop = container.scrollHeight;
 
+                // Event listeners
                 const replyBtn = bubble.querySelector('.reply-btn');
-                if(replyBtn) {
+                if (replyBtn) {
                     replyBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         const btn = e.currentTarget;
@@ -926,7 +989,7 @@
                     });
                 }
                 const imgWrap = bubble.querySelector('.msg-image-wrap');
-                if(imgWrap) {
+                if (imgWrap) {
                     imgWrap.addEventListener('click', (e) => {
                         e.stopPropagation();
                         const src = imgWrap.getAttribute('data-img-src');
@@ -934,13 +997,118 @@
                     });
                 }
                 const replyRef = bubble.querySelector('.reply-ref-block');
-                if(replyRef && msg.reply_to_id) {
+                if (replyRef && msg.reply_to_id) {
                     replyRef.addEventListener('click', (e) => {
                         e.stopPropagation();
                         scrollToMessage(msg.reply_to_id);
                     });
                 }
-                updateReactionUI(wrapper);
+                // Edit and Delete buttons
+                if (isOwn && !msg.is_deleted) {
+                    const editBtn = bubble.querySelector('.edit-btn');
+                    const deleteBtn = bubble.querySelector('.delete-btn');
+                    editBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        startEditMessage(msg, isPrivate);
+                    });
+                    deleteBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        deleteMessage(msg, isPrivate);
+                    });
+                }
+                updateReactionUI(wrapper, isPrivate);
+            }
+
+            // ── Edit message logic ──
+            function startEditMessage(msg, isPrivate) {
+                const wrapper = document.querySelector(`.msg-wrapper[data-msg-id="${msg.id}"]`);
+                if (!wrapper) return;
+                const bubble = wrapper.querySelector('.msg-bubble');
+                const textDiv = bubble.querySelector('.msg-text');
+                if (!textDiv) return;
+                const currentText = msg.message || '';
+                textDiv.innerHTML = `<input type="text" class="edit-input" value="${escapeHtml(currentText)}" id="editInput-${msg.id}">
+                    <div style="display:flex; gap:4px; margin-top:4px;">
+                        <button class="msg-action-btn save-edit" data-id="${msg.id}">Save</button>
+                        <button class="msg-action-btn cancel-edit" data-id="${msg.id}">Cancel</button>
+                    </div>`;
+                const saveBtn = bubble.querySelector('.save-edit');
+                const cancelBtn = bubble.querySelector('.cancel-edit');
+                const input = bubble.querySelector('.edit-input');
+                input.focus();
+                cancelBtn.addEventListener('click', () => {
+                    textDiv.innerHTML = escapeHtml(currentText);
+                    reattachEditDeleteButtons(msg, isPrivate);
+                });
+                saveBtn.addEventListener('click', async () => {
+                    const newText = input.value.trim();
+                    if (!newText) return;
+                    const table = isPrivate ? 'private_messages' : 'messages';
+                    const { error } = await supabase.from(table)
+                        .update({ message: newText, edited_at: new Date().toISOString() })
+                        .eq('id', msg.id);
+                    if (error) { showErrorToast('Edit failed'); return; }
+                    msg.message = newText;
+                    msg.edited_at = new Date().toISOString();
+                    textDiv.innerHTML = escapeHtml(newText);
+                    // Update edited indicator
+                    const timeSpan = bubble.querySelector('.msg-time');
+                    if (timeSpan) {
+                        let editedSpan = bubble.querySelector('.msg-edited');
+                        if (!editedSpan) {
+                            editedSpan = document.createElement('span');
+                            editedSpan.className = 'msg-edited';
+                            timeSpan.parentNode.insertBefore(editedSpan, timeSpan.nextSibling);
+                        }
+                        editedSpan.textContent = '(edited)';
+                    }
+                    reattachEditDeleteButtons(msg, isPrivate);
+                });
+            }
+
+            function reattachEditDeleteButtons(msg, isPrivate) {
+                const wrapper = document.querySelector(`.msg-wrapper[data-msg-id="${msg.id}"]`);
+                if (!wrapper) return;
+                const bubble = wrapper.querySelector('.msg-bubble');
+                // Remove existing actions
+                const existingActions = bubble.querySelector('.msg-actions');
+                if (existingActions) existingActions.remove();
+                if (msg.is_deleted) return;
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'msg-actions';
+                actionsDiv.innerHTML = `
+                    <button class="msg-action-btn edit-btn" data-id="${msg.id}">✎</button>
+                    <button class="msg-action-btn delete-btn" data-id="${msg.id}">✕</button>
+                `;
+                bubble.appendChild(actionsDiv);
+                actionsDiv.querySelector('.edit-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    startEditMessage(msg, isPrivate);
+                });
+                actionsDiv.querySelector('.delete-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteMessage(msg, isPrivate);
+                });
+            }
+
+            async function deleteMessage(msg, isPrivate) {
+                if (!confirm('Delete this message?')) return;
+                const table = isPrivate ? 'private_messages' : 'messages';
+                const { error } = await supabase.from(table)
+                    .update({ is_deleted: true })
+                    .eq('id', msg.id);
+                if (error) { showErrorToast('Delete failed'); return; }
+                msg.is_deleted = true;
+                const wrapper = document.querySelector(`.msg-wrapper[data-msg-id="${msg.id}"]`);
+                if (wrapper) {
+                    const bubble = wrapper.querySelector('.msg-bubble');
+                    const textDiv = bubble.querySelector('.msg-text');
+                    if (textDiv) textDiv.innerHTML = '<span class="msg-text deleted">Message removed</span>';
+                    const actions = bubble.querySelector('.msg-actions');
+                    if (actions) actions.remove();
+                    const imageWrap = bubble.querySelector('.msg-image-wrap');
+                    if (imageWrap) imageWrap.style.display = 'none';
+                }
             }
 
             function setReplyingTo(ref) {
@@ -957,6 +1125,45 @@
                     replyIndicatorBar.classList.add('hidden');
                     replyToUserDisp.textContent = ''; replyPreviewDisp.textContent = '';
                 }
+            }
+
+            // ── Typing indicator ──
+            function setTypingStatus(isTyping) {
+                if (!username || !presenceChannel) return;
+                clearTimeout(typingTimeout);
+                if (isTyping) {
+                    const typingData = { typing_in: currentTab === 'private' && activePrivateChat ? 'private' : 'public' };
+                    if (typingData.typing_in === 'private') typingData.partner = activePrivateChat;
+                    presenceChannel.track({ username, client_id: clientId, online_at: new Date().toISOString(), ...typingData });
+                } else {
+                    presenceChannel.track({ username, client_id: clientId, online_at: new Date().toISOString() });
+                }
+            }
+            messageInput.addEventListener('input', () => {
+                setTypingStatus(true);
+                clearTimeout(typingTimeout);
+                typingTimeout = setTimeout(() => setTypingStatus(false), 2000);
+            });
+            messageInput.addEventListener('blur', () => setTypingStatus(false));
+
+            function updateTypingIndicator() {
+                let text = '';
+                const typersPublic = [];
+                const typersPrivate = {};
+                onlineUsers.forEach((user, key) => {
+                    if (user.username === username) return;
+                    if (user.typing_in === 'public') typersPublic.push(user.username);
+                    if (user.typing_in === 'private' && user.partner === username) {
+                        if (!typersPrivate[user.username]) typersPrivate[user.username] = true;
+                    }
+                });
+                if (currentTab === 'public') {
+                    if (typersPublic.length === 1) text = `${typersPublic[0]} is typing...`;
+                    else if (typersPublic.length > 1) text = `${typersPublic.length} people are typing...`;
+                } else if (currentTab === 'private' && activePrivateChat) {
+                    if (typersPrivate[activePrivateChat]) text = `${activePrivateChat} is typing...`;
+                }
+                typingIndicator.textContent = text;
             }
 
             // ── Tab switching ──
@@ -983,6 +1190,7 @@
                         messageInput.placeholder = 'Select a partner from the sidebar first.';
                     }
                 }
+                updateTypingIndicator();
             }
             chatTabs.addEventListener('click', (e) => {
                 const tab = e.target.closest('.chat-tab');
@@ -1013,6 +1221,7 @@
                     if(currentTab === 'private') switchTab('public');
                 }
                 updateSidebarUI();
+                updateTypingIndicator();
             }
             cancelPrivateBtn.addEventListener('click', () => setActivePrivateChat(null));
 
@@ -1032,6 +1241,8 @@
                     await fetchAvatars(users);
                     data.forEach(msg => renderMessage(msg, true));
                 }
+                // Also load private reactions
+                loadReactions('private_message_reactions', true);
             }
 
             // ── Sidebar – ONLY online users ──
@@ -1047,7 +1258,7 @@
                     html += buildSidebarItem(username, true, false, true);
                     rendered.add(username);
                 }
-                onlineUsers.forEach((user) => {
+                onlineUsers.forEach((user, key) => {
                     if(!rendered.has(user.username) && user.username !== username) {
                         rendered.add(user.username);
                         let isPending = pendingPrivateRequests.has(user.username) &&
@@ -1222,6 +1433,7 @@
                     messageInput.value = '';
                     setReplyingTo(null);
                     clearAttachedImage();
+                    setTypingStatus(false); // stop typing indicator
                 } catch (err) {
                     showErrorToast('Send failed: ' + err.message);
                 } finally {
@@ -1238,6 +1450,16 @@
                         renderMessage(payload.new, false);
                         setConnectionState('connected');
                     })
+                    .on('postgres_changes', { event:'UPDATE', schema:'public', table:'messages' }, payload => {
+                        // Update edited/deleted messages in place
+                        const updated = payload.new;
+                        const existing = document.querySelector(`.msg-wrapper[data-msg-id="${updated.id}"]`);
+                        if (existing) {
+                            existing.remove();
+                            knownMessageIds.delete(updated.id);
+                            renderMessage(updated, false);
+                        }
+                    })
                     .subscribe();
 
                 if (privMsgChannel) supabase.removeChannel(privMsgChannel);
@@ -1246,6 +1468,17 @@
                         const msg = payload.new;
                         if (activePrivateChat && ((msg.from_user === username && msg.to_user === activePrivateChat) || (msg.from_user === activePrivateChat && msg.to_user === username))) {
                             renderMessage(msg, true);
+                        }
+                    })
+                    .on('postgres_changes', { event:'UPDATE', schema:'public', table:'private_messages' }, payload => {
+                        const updated = payload.new;
+                        if (activePrivateChat && ((updated.from_user === username && updated.to_user === activePrivateChat) || (updated.from_user === activePrivateChat && updated.to_user === username))) {
+                            const existing = document.querySelector(`.msg-wrapper[data-msg-id="${updated.id}"]`);
+                            if (existing) {
+                                existing.remove();
+                                knownMessageIds.delete(updated.id);
+                                renderMessage(updated, true);
+                            }
                         }
                     })
                     .subscribe();
@@ -1263,20 +1496,36 @@
                             const presences = state[key];
                             if(presences && presences.length>0) {
                                 const p = presences[0];
-                                onlineUsers.set(key, { username: p.username||key.split('::')[0]||'Unknown', client_id:p.client_id||'', online_at:p.online_at||'' });
+                                onlineUsers.set(key, {
+                                    username: p.username||key.split('::')[0]||'Unknown',
+                                    client_id: p.client_id||'',
+                                    typing_in: p.typing_in || null,
+                                    partner: p.partner || null
+                                });
                             }
                         });
                         updateSidebarUI();
+                        updateTypingIndicator();
                         setConnectionState('connected');
                     })
                     .on('presence', { event:'join' }, ({key, newPresences}) => {
                         if(newPresences && newPresences.length>0) {
                             const p = newPresences[0];
-                            onlineUsers.set(key, { username: p.username||key.split('::')[0]||'Unknown', client_id:p.client_id||'', online_at:p.online_at||'' });
+                            onlineUsers.set(key, {
+                                username: p.username||key.split('::')[0]||'Unknown',
+                                client_id: p.client_id||'',
+                                typing_in: p.typing_in || null,
+                                partner: p.partner || null
+                            });
                         }
                         updateSidebarUI();
+                        updateTypingIndicator();
                     })
-                    .on('presence', { event:'leave' }, ({key}) => { onlineUsers.delete(key); updateSidebarUI(); })
+                    .on('presence', { event:'leave' }, ({key}) => {
+                        onlineUsers.delete(key);
+                        updateSidebarUI();
+                        updateTypingIndicator();
+                    })
                     .subscribe(async (status) => {
                         if(status==='SUBSCRIBED') {
                             await presenceChannel.track({ username:username, client_id:clientId, online_at:new Date().toISOString() });
@@ -1291,7 +1540,9 @@
                 subscribeToRealtime();
                 if(username) { setupPresence(); subscribeToPrivateRequests(); await loadPendingRequests(); }
                 await loadMessages();
-                loadReactions();
+                // Load reactions
+                loadReactions('message_reactions', false);
+                loadReactions('private_message_reactions', true);
                 subscribeToReactions();
                 setTimeout(() => refreshBtn.classList.remove('spinning'), 700);
             }
@@ -1378,7 +1629,8 @@
                 setupPresence();
                 subscribeToPrivateRequests();
                 loadPendingRequests();
-                loadReactions();
+                loadReactions('message_reactions', false);
+                loadReactions('private_message_reactions', true);
                 subscribeToReactions();
             });
             nameInput.addEventListener('keypress', (e) => { if(e.key==='Enter') nameSubmitBtn.click(); });
@@ -1422,7 +1674,8 @@
                     setupPresence();
                     subscribeToPrivateRequests();
                     loadPendingRequests();
-                    loadReactions();
+                    loadReactions('message_reactions', false);
+                    loadReactions('private_message_reactions', true);
                     subscribeToReactions();
                 } else {
                     nameOverlay.classList.remove('hidden'); nameInput.focus();
