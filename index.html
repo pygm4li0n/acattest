@@ -6,7 +6,7 @@
     <title>NITRO CHAT // EPIC</title>
     <style>
         /* =========================================================
-           NITRO CHAT – EPIC UI (mobile‑optimized + epic request overlay)
+           NITRO CHAT – EPIC UI (mobile‑optimized + private reactions)
         ========================================================= */
         :root {
             --bg-deep: #040410;
@@ -107,7 +107,7 @@
             width: 100%; height: 100%; object-fit: cover;
             position: absolute; top: 0; left: 0;
         }
-        .sidebar-user-item .online-indicator {
+        .online-indicator {
             position: absolute; bottom: 0px; right: 0px; width: 10px; height: 10px;
             border-radius: 50%; background: #4ade80; border: 2px solid #12122a;
             box-shadow: 0 0 8px rgba(74,222,128,0.7);
@@ -120,9 +120,9 @@
             color: #f0c040; padding: 4px 10px; border-radius: 14px; font-size: 0.68rem;
             cursor: pointer; font-weight: 600; white-space: nowrap; transition: all 0.25s; flex-shrink: 0;
         }
-        .sidebar-user-item .private-btn:hover { background: rgba(240,165,0,0.3); box-shadow: var(--glow-gold); color: #fff; }
-        .sidebar-user-item .private-btn.accepted { background: rgba(74,222,128,0.2); border-color: rgba(74,222,128,0.4); color: #4ade80; }
-        .sidebar-user-item .private-btn.pending { background: rgba(255,193,7,0.2); border-color: rgba(255,193,7,0.4); color: #ffc107; animation: pulsePending 1.5s ease-in-out infinite; }
+        .private-btn:hover { background: rgba(240,165,0,0.3); box-shadow: var(--glow-gold); color: #fff; }
+        .private-btn.accepted { background: rgba(74,222,128,0.2); border-color: rgba(74,222,128,0.4); color: #4ade80; }
+        .private-btn.pending { background: rgba(255,193,7,0.2); border-color: rgba(255,193,7,0.4); color: #ffc107; animation: pulsePending 1.5s ease-in-out infinite; }
         @keyframes pulsePending { 0%,100% { box-shadow: 0 0 4px rgba(255,193,7,0.3); } 50% { box-shadow: 0 0 16px rgba(255,193,7,0.7); } }
         .sidebar-user-item.you-tag .user-name::after { content: ' (you)'; color: #7a7a9a; font-weight: 400; font-size: 0.7rem; }
         .no-users-sidebar { text-align: center; color: #5a5a78; font-style: italic; font-size: 0.78rem; padding: 20px 10px; }
@@ -134,8 +134,8 @@
         .sidebar-toggle {
             display: none; position: absolute; top: 12px; left: 12px; z-index: 30;
             background: var(--metal-dark); border: 1px solid var(--border-glow); color: #fff;
-            width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1.1rem;
-            align-items: center; justify-content: center; box-shadow: 0 0 12px rgba(0,0,0,0.5);
+            width: 44px; height: 44px; border-radius: 50%; cursor: pointer; font-size: 1.3rem;
+            align-items: center; justify-content: center;
         }
 
         /* ── Chat Panel ── */
@@ -319,7 +319,10 @@
         }
         .msg-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .msg-username { font-weight: 700; font-size: 0.76rem; color: #c0a0f0; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+        .msg-time { font-size: 0.65rem; color: #8a8aaa; margin-left: 6px; font-weight: 400; }
         .msg-text { font-size: 0.9rem; color: #d8d8f2; line-height: 1.4; }
+        .msg-text.deleted { color: #5a5a78; font-style: italic; }
+        .msg-edited { font-size: 0.65rem; color: #8a8aaa; margin-left: 4px; font-style: italic; }
         .msg-image-wrap { margin-top: 8px; border-radius: var(--radius-md); overflow: hidden; cursor: pointer; max-width: 300px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s; }
         .msg-image-wrap:hover { box-shadow: 0 0 20px rgba(0,229,255,0.25); border-color: rgba(0,229,255,0.4); }
         .msg-image-wrap img { display: block; width: 100%; height: auto; max-height: 350px; object-fit: cover; }
@@ -352,13 +355,18 @@
         .reaction-btn.active { background: rgba(0,229,255,0.2); border-color: rgba(0,229,255,0.5); color: #fff; box-shadow: 0 0 8px rgba(0,229,255,0.3); }
         .reaction-btn:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.3); color: #fff; }
 
-        .reply-btn {
-            position: absolute; top: 6px; right: 10px; background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.12); color: #a0a0c0; border-radius: 6px;
-            padding: 2px 8px; font-size: 0.6rem; cursor: pointer; opacity: 0; transition: all 0.2s; font-weight: 500;
+        /* ── Message actions container (reply, edit, delete) ── */
+        .msg-actions-container {
+            position: absolute; top: 6px; right: 10px;
+            display: flex; gap: 4px; opacity: 0; transition: opacity 0.2s; pointer-events: none;
         }
-        .msg-bubble:hover .reply-btn { opacity: 1; }
-        .msg-bubble .reply-btn:hover { background: rgba(0,229,255,0.2); border-color: rgba(0,229,255,0.5); color: #fff; box-shadow: 0 0 10px rgba(0,229,255,0.3); }
+        .msg-bubble:hover .msg-actions-container { opacity: 1; pointer-events: auto; }
+        .msg-action-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+            color: #a0a0c0; border-radius: 4px; padding: 2px 6px; font-size: 0.6rem; cursor: pointer;
+            white-space: nowrap;
+        }
+        .msg-action-btn:hover { background: rgba(0,229,255,0.2); border-color: rgba(0,229,255,0.5); color: #fff; }
 
         /* ── Input Area ── */
         .input-area-bar {
@@ -474,7 +482,6 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.6), var(--glow-purple);
             animation: modalPop 0.45s cubic-bezier(0.16,1,0.3,1);
         }
-        @keyframes modalPop { from { opacity: 0; transform: scale(0.85) translateY(30px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         .overlay-card h3 { margin-bottom: 18px; color: #d0b8f8; font-size: 1.1rem; letter-spacing: 0.04em; text-shadow: 0 0 14px rgba(179,71,234,0.5); }
         .overlay-card input[type="text"] {
             width: 100%; padding: 13px; border: 1px solid var(--border-subtle);
@@ -722,10 +729,11 @@
             let currentTab = 'public';
             let onlineUsers = new Map();
             let isConnected = false;
-            let realtimeChannel = null, presenceChannel = null, privateRequestsChannel = null, privMsgChannel = null, reactionsChannel = null;
+            let realtimeChannel = null, presenceChannel = null, privateRequestsChannel = null, privMsgChannel = null, reactionsChannel = null, privReactionsChannel = null;
             let pendingPrivateRequests = new Map();
             let knownMessageIds = new Set();
             let messageReactions = {};
+            let privateMessageReactions = {};
             const EMOJIS = ['❤️','😂','😮','😢','😡'];
             let pendingImageUrl = null;
             let profilePicFile = null;
@@ -833,6 +841,10 @@
                     sidebarStatusText.textContent = 'Connecting…';
                 }
             }
+            function formatTime(iso) {
+                if (!iso) return '';
+                return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
 
             async function fetchAvatars(usernames) {
                 const unique = [...new Set(usernames.filter(u => u && !avatarCache[u]))];
@@ -896,47 +908,53 @@
                 fileInput.value = '';
             }
 
-            async function loadReactions() {
-                const { data, error } = await supabase.from('message_reactions').select('*');
-                if(error) return;
-                messageReactions = {};
+            // ── Reactions (public & private) ──
+            async function loadReactions(table, isPrivate) {
+                const { data, error } = await supabase.from(table).select('*');
+                if (error) return;
+                const target = isPrivate ? privateMessageReactions : messageReactions;
+                for (const key of Object.keys(target)) delete target[key];
                 (data||[]).forEach(r => {
-                    const mid = r.message_id;
-                    if(!messageReactions[mid]) messageReactions[mid] = {};
-                    if(!messageReactions[mid][r.emoji]) messageReactions[mid][r.emoji] = { count:0, users:new Set() };
-                    messageReactions[mid][r.emoji].count++;
-                    messageReactions[mid][r.emoji].users.add(r.username);
+                    if (!target[r.message_id]) target[r.message_id] = {};
+                    if (!target[r.message_id][r.emoji]) target[r.message_id][r.emoji] = { count:0, users: new Set() };
+                    target[r.message_id][r.emoji].count++;
+                    target[r.message_id][r.emoji].users.add(r.username);
                 });
-                document.querySelectorAll('.msg-wrapper').forEach(w => updateReactionUI(w));
+                document.querySelectorAll('.msg-wrapper').forEach(w => updateReactionUI(w, isPrivate));
             }
-            function subscribeToReactions() {
-                if(reactionsChannel) supabase.removeChannel(reactionsChannel);
-                reactionsChannel = supabase.channel('nitro-reactions')
-                    .on('postgres_changes', { event:'*', schema:'public', table:'message_reactions' }, () => loadReactions())
+            function subscribeReactions() {
+                if (reactionsChannel) supabase.removeChannel(reactionsChannel);
+                reactionsChannel = supabase.channel('pub-react')
+                    .on('postgres_changes', { event:'*', schema:'public', table:'message_reactions' }, () => loadReactions('message_reactions', false))
+                    .subscribe();
+                if (privReactionsChannel) supabase.removeChannel(privReactionsChannel);
+                privReactionsChannel = supabase.channel('priv-react')
+                    .on('postgres_changes', { event:'*', schema:'public', table:'private_message_reactions' }, () => loadReactions('private_message_reactions', true))
                     .subscribe();
             }
-            function updateReactionUI(wrapper) {
+            function updateReactionUI(wrapper, isPrivate) {
                 const msgId = wrapper.getAttribute('data-msg-id');
                 const bar = wrapper.querySelector('.reactions-bar');
-                if(!bar) return;
-                const reactions = messageReactions[msgId] || {};
+                if (!bar) return;
+                const reactions = (isPrivate ? privateMessageReactions : messageReactions)[msgId] || {};
                 bar.innerHTML = EMOJIS.map(emoji => {
-                    const data = reactions[emoji] || { count:0, users:new Set() };
+                    const data = reactions[emoji] || { count:0, users: new Set() };
                     const active = data.users.has(username) ? 'active' : '';
-                    return `<button class="reaction-btn ${active}" data-emoji="${emoji}">${emoji} <span class="count">${data.count}</span></button>`;
+                    return `<button class="reaction-btn ${active}" data-emoji="${emoji}">${emoji} ${data.count}</button>`;
                 }).join('');
                 bar.querySelectorAll('.reaction-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
+                    btn.addEventListener('click', e => {
                         e.stopPropagation();
-                        toggleReaction(msgId, btn.dataset.emoji);
+                        toggleReaction(msgId, btn.dataset.emoji, isPrivate);
                     });
                 });
             }
-            async function toggleReaction(messageId, emoji) {
-                const { data:existing } = await supabase.from('message_reactions')
-                    .select('id').eq('message_id', messageId).eq('username', username).eq('emoji', emoji).single();
-                if(existing) { await supabase.from('message_reactions').delete().eq('id', existing.id); }
-                else { await supabase.from('message_reactions').insert({ message_id:messageId, username, emoji }); }
+            async function toggleReaction(messageId, emoji, isPrivate) {
+                const table = isPrivate ? 'private_message_reactions' : 'message_reactions';
+                const { data: existing } = await supabase.from(table)
+                    .select('id').match({ message_id: messageId, username, emoji }).single();
+                if (existing) await supabase.from(table).delete().eq('id', existing.id);
+                else await supabase.from(table).insert({ message_id: messageId, username, emoji });
             }
 
             function scrollToMessage(msgId) {
@@ -964,8 +982,10 @@
                 const bubble = document.createElement('div');
                 bubble.className = 'msg-bubble';
                 if(isPrivate) bubble.classList.add('private-msg');
+
                 let innerHTML = '';
-                if(msg.reply_to_username && msg.reply_to_message) {
+                // reply reference
+                if (msg.reply_to_username && msg.reply_to_message) {
                     let imageThumb = '';
                     if (msg.reply_to_image_url) imageThumb = `<img src="${escapeHtml(msg.reply_to_image_url)}" alt="replied image" class="reply-image-thumb">`;
                     innerHTML += `<div class="reply-ref-block" data-reply-to-id="${msg.reply_to_id || ''}">
@@ -976,50 +996,83 @@
                         </div>
                     </div>`;
                 }
-                innerHTML += `<div class="msg-username"><span class="msg-avatar">${renderAvatarHTML(user)}</span> ${escapeHtml(user)}${isPrivate?' <span style="font-size:0.6rem;opacity:0.6;">🔒</span>':''}</div>`;
-                if(msg.message) innerHTML += `<div class="msg-text">${escapeHtml(msg.message)}</div>`;
-                if(msg.image_url) innerHTML += `<div class="msg-image-wrap" data-img-src="${escapeHtml(msg.image_url)}"><img src="${escapeHtml(msg.image_url)}" alt="shared image" loading="lazy"></div>`;
-                innerHTML += `<button class="reply-btn" data-msg-id="${msg.id}" data-username="${escapeHtml(user)}" data-message="${escapeHtml(msg.message||'')}" data-imageurl="${msg.image_url || ''}">↩ Reply</button>`;
+                // username + time + edited
+                innerHTML += `<div class="msg-username"><span class="msg-avatar">${renderAvatarHTML(user)}</span> ${escapeHtml(user)}${isPrivate?' <span style="font-size:0.6rem;opacity:0.6;">🔒</span>':''} <span class="msg-time">${formatTime(msg.created_at)}</span>`;
+                if (msg.edited_at) innerHTML += `<span class="msg-edited">(edited)</span>`;
+                innerHTML += `</div>`;
+
+                if (msg.is_deleted) {
+                    innerHTML += `<div class="msg-text deleted">Message removed</div>`;
+                } else {
+                    if (msg.message) innerHTML += `<div class="msg-text">${escapeHtml(msg.message)}</div>`;
+                }
+                if (msg.image_url && !msg.is_deleted) {
+                    innerHTML += `<div class="msg-image-wrap" data-img-src="${escapeHtml(msg.image_url)}"><img src="${escapeHtml(msg.image_url)}" alt="shared image" loading="lazy"></div>`;
+                }
+                // message actions (reply / edit / delete)
+                innerHTML += `<div class="msg-actions-container">`;
+                innerHTML += `<button class="msg-action-btn reply-btn" data-id="${msg.id}" data-username="${escapeHtml(user)}" data-message="${escapeHtml(msg.message||'')}" data-imageurl="${msg.image_url || ''}">↩ Reply</button>`;
+                if (isOwn && !msg.is_deleted) {
+                    innerHTML += `<button class="msg-action-btn edit-btn" data-id="${msg.id}">✎</button>`;
+                    innerHTML += `<button class="msg-action-btn delete-btn" data-id="${msg.id}">✕</button>`;
+                }
+                innerHTML += `</div>`;
                 innerHTML += `<div class="reactions-bar"></div>`;
+
                 bubble.innerHTML = innerHTML;
                 wrapper.appendChild(bubble);
                 container.appendChild(wrapper);
                 container.scrollTop = container.scrollHeight;
 
+                // attach listeners
                 const replyBtn = bubble.querySelector('.reply-btn');
-                if(replyBtn) {
+                if (replyBtn) {
                     replyBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         const btn = e.currentTarget;
                         setReplyingTo({
-                            id: btn.getAttribute('data-msg-id'),
-                            username: btn.getAttribute('data-username'),
-                            message: btn.getAttribute('data-message'),
-                            imageUrl: btn.getAttribute('data-imageurl') || null
+                            id: btn.dataset.id,
+                            username: btn.dataset.username,
+                            message: btn.dataset.message,
+                            imageUrl: btn.dataset.imageurl || null
                         });
                     });
                 }
                 const imgWrap = bubble.querySelector('.msg-image-wrap');
-                if(imgWrap) {
+                if (imgWrap) {
                     imgWrap.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        const src = imgWrap.getAttribute('data-img-src');
-                        if(src) { lightboxImg.src = src; lightboxOverlay.classList.remove('hidden'); }
+                        const src = imgWrap.dataset.imgSrc;
+                        if (src) { lightboxImg.src = src; lightboxOverlay.classList.remove('hidden'); }
                     });
                 }
                 const replyRef = bubble.querySelector('.reply-ref-block');
-                if(replyRef && msg.reply_to_id) {
-                    replyRef.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        scrollToMessage(msg.reply_to_id);
-                    });
+                if (replyRef && msg.reply_to_id) {
+                    replyRef.addEventListener('click', () => scrollToMessage(msg.reply_to_id));
                 }
-                updateReactionUI(wrapper);
+
+                if (isOwn && !msg.is_deleted) {
+                    const editBtn = bubble.querySelector('.edit-btn');
+                    const deleteBtn = bubble.querySelector('.delete-btn');
+                    if (editBtn) {
+                        editBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            startEditMessage(msg, isPrivate);
+                        });
+                    }
+                    if (deleteBtn) {
+                        deleteBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            deleteMessage(msg, isPrivate);
+                        });
+                    }
+                }
+                updateReactionUI(wrapper, isPrivate);
             }
 
             function setReplyingTo(ref) {
                 replyingTo = ref;
-                if(ref) {
+                if (ref) {
                     replyIndicatorBar.classList.remove('hidden');
                     replyToUserDisp.textContent = '@' + ref.username;
                     let preview = trunc(ref.message, 40);
@@ -1033,6 +1086,176 @@
                 }
             }
 
+            function startEditMessage(msg, isPrivate) {
+                const wrapper = document.querySelector(`.msg-wrapper[data-msg-id="${msg.id}"]`);
+                if (!wrapper) return;
+                const bubble = wrapper.querySelector('.msg-bubble');
+                const textDiv = bubble.querySelector('.msg-text');
+                if (!textDiv) return;
+                const currentText = msg.message || '';
+                textDiv.innerHTML = `<input type="text" class="edit-input" value="${escapeHtml(currentText)}" id="editInput-${msg.id}" style="width:100%; background:#0d0d20; border:1px solid var(--accent-cyan); color:#e0e0f2; padding:4px 8px; border-radius:6px; font-size:0.85rem;">
+                    <div style="display:flex; gap:4px; margin-top:4px;">
+                        <button class="msg-action-btn save-edit" data-id="${msg.id}">Save</button>
+                        <button class="msg-action-btn cancel-edit" data-id="${msg.id}">Cancel</button>
+                    </div>`;
+                const saveBtn = bubble.querySelector('.save-edit');
+                const cancelBtn = bubble.querySelector('.cancel-edit');
+                const input = bubble.querySelector('.edit-input');
+                input.focus();
+                cancelBtn.addEventListener('click', () => textDiv.innerHTML = escapeHtml(currentText));
+                saveBtn.addEventListener('click', async () => {
+                    const newText = input.value.trim();
+                    if (!newText) return;
+                    const table = isPrivate ? 'private_messages' : 'messages';
+                    const { error } = await supabase.from(table).update({ message: newText, edited_at: new Date().toISOString() }).eq('id', msg.id);
+                    if (error) { showError('Edit failed'); return; }
+                    msg.message = newText;
+                    msg.edited_at = new Date().toISOString();
+                    textDiv.innerHTML = escapeHtml(newText);
+                    const timeSpan = bubble.querySelector('.msg-time');
+                    if (timeSpan) {
+                        let editedSpan = bubble.querySelector('.msg-edited');
+                        if (!editedSpan) {
+                            editedSpan = document.createElement('span');
+                            editedSpan.className = 'msg-edited';
+                            timeSpan.parentNode.insertBefore(editedSpan, timeSpan.nextSibling);
+                        }
+                        editedSpan.textContent = '(edited)';
+                    }
+                });
+            }
+
+            async function deleteMessage(msg, isPrivate) {
+                if (!confirm('Delete this message?')) return;
+                const table = isPrivate ? 'private_messages' : 'messages';
+                const { error } = await supabase.from(table).update({ is_deleted: true }).eq('id', msg.id);
+                if (error) { showError('Delete failed'); return; }
+                msg.is_deleted = true;
+                const wrapper = document.querySelector(`.msg-wrapper[data-msg-id="${msg.id}"]`);
+                if (wrapper) {
+                    const bubble = wrapper.querySelector('.msg-bubble');
+                    const textDiv = bubble.querySelector('.msg-text');
+                    if (textDiv) textDiv.innerHTML = '<span class="msg-text deleted">Message removed</span>';
+                    const actions = bubble.querySelector('.msg-actions-container');
+                    if (actions) actions.style.display = 'none';
+                    const imgWrap = bubble.querySelector('.msg-image-wrap');
+                    if (imgWrap) imgWrap.style.display = 'none';
+                }
+            }
+
+            // ── Typing broadcast ──
+            function startTyping() {
+                if (!username || !typingChannel) return;
+                const tab = currentTab === 'private' && activePrivateChat ? 'private' : 'public';
+                const partner = tab === 'private' ? activePrivateChat : null;
+                typingChannel.send({
+                    type: 'broadcast',
+                    event: 'typing',
+                    payload: { username, tab, partner }
+                }).then(() => {}).catch(console.warn);
+            }
+            function stopTyping() {
+                if (!username || !typingChannel) return;
+                typingChannel.send({
+                    type: 'broadcast',
+                    event: 'stop_typing',
+                    payload: { username }
+                }).then(() => {}).catch(console.warn);
+            }
+            messageInput.addEventListener('input', () => {
+                if (messageInput.value.length > 0) startTyping();
+                else stopTyping();
+            });
+
+            function handleTypingBroadcast(payload) {
+                const { event, username: sender, tab, partner } = payload;
+                if (sender === username) return;
+
+                if (event === 'typing') {
+                    if (typingUsers.has(sender)) clearTimeout(typingUsers.get(sender).timeoutId);
+                    const timeoutId = setTimeout(() => {
+                        typingUsers.delete(sender);
+                        updateTypingIndicator();
+                    }, 3000);
+                    typingUsers.set(sender, { tab, partner, timeoutId });
+                } else if (event === 'stop_typing') {
+                    if (typingUsers.has(sender)) {
+                        clearTimeout(typingUsers.get(sender).timeoutId);
+                        typingUsers.delete(sender);
+                    }
+                }
+                updateTypingIndicator();
+            }
+
+            function updateTypingIndicator() {
+                const typersPublic = [];
+                const typersPrivate = {};
+                typingUsers.forEach((data, user) => {
+                    if (data.tab === 'public') typersPublic.push(user);
+                    else if (data.tab === 'private' && data.partner === username) typersPrivate[user] = true;
+                });
+
+                let text = '';
+                const dots = '<span class="typing-dots"><span></span><span></span><span></span></span>';
+                if (currentTab === 'public') {
+                    if (typersPublic.length === 1) text = `${typersPublic[0]} is typing... ${dots}`;
+                    else if (typersPublic.length > 1) text = `Several people are typing... ${dots}`;
+                } else if (currentTab === 'private' && activePrivateChat) {
+                    if (typersPrivate[activePrivateChat]) text = `${activePrivateChat} is typing... ${dots}`;
+                }
+                typingIndicator.innerHTML = text || '';
+            }
+
+            function setupTypingChannel() {
+                if (typingChannel) supabase.removeChannel(typingChannel);
+                typingChannel = supabase.channel('typing-broadcast', { config: { broadcast: { self: false } } });
+                typingChannel.on('broadcast', { event: 'typing' }, (payload) => handleTypingBroadcast(payload.payload));
+                typingChannel.on('broadcast', { event: 'stop_typing' }, (payload) => handleTypingBroadcast(payload.payload));
+                typingChannel.subscribe();
+            }
+
+            // ── Presence ──
+            function setupPresence() {
+                if (presenceChannel) return;
+                if (!username) return;
+                const presenceKey = `${username}::${clientId}`;
+                presenceChannel = supabase.channel('nitro-chat-presence', { config:{ presence:{ key:presenceKey } } });
+                presenceChannel
+                    .on('presence', { event:'sync' }, () => {
+                        const state = presenceChannel.presenceState();
+                        onlineUsers.clear();
+                        Object.keys(state).forEach(key => {
+                            const presences = state[key];
+                            if(presences && presences.length>0) {
+                                const p = presences[0];
+                                onlineUsers.set(key, { username: p.username||key.split('::')[0]||'Unknown', client_id:p.client_id||'', online_at:p.online_at||'' });
+                            }
+                        });
+                        updateSidebarUI();
+                        setConnection('connected');
+                    })
+                    .on('presence', { event:'join' }, ({key, newPresences}) => {
+                        if(newPresences && newPresences.length>0) {
+                            const p = newPresences[0];
+                            onlineUsers.set(key, { username: p.username||key.split('::')[0]||'Unknown', client_id:p.client_id||'', online_at:p.online_at||'' });
+                        }
+                        updateSidebarUI();
+                    })
+                    .on('presence', { event:'leave' }, ({key}) => { onlineUsers.delete(key); updateSidebarUI(); })
+                    .subscribe(async (status) => {
+                        if(status==='SUBSCRIBED') {
+                            await presenceChannel.track({ username:username, client_id:clientId, online_at:new Date().toISOString() });
+                            setConnection('connected');
+                        }
+                    });
+            }
+            function reTrackPresence() {
+                if (username && presenceChannel) {
+                    presenceChannel.track({ username:username, client_id:clientId, online_at:new Date().toISOString() }).catch(console.warn);
+                }
+            }
+
+            // ── Tabs & private chat ──
             function switchTab(tabName) {
                 currentTab = tabName;
                 const tabs = chatTabs.querySelectorAll('.chat-tab');
@@ -1108,6 +1331,7 @@
                     await fetchAvatars(users);
                     data.forEach(msg => renderMessage(msg, true));
                 }
+                loadReactions('private_message_reactions', true);
             }
 
             async function updateSidebarUI() {
@@ -1164,7 +1388,7 @@
                 </div>`;
             }
 
-            // Epic request overlay functions
+            // Request overlay
             function showRequestOverlay(fromUser, requestId) {
                 currentRequestData = { from_user: fromUser, id: requestId };
                 const url = getAvatarURL(fromUser);
@@ -1338,118 +1562,6 @@
                 }
             }
 
-            // Typing broadcast
-            function startTyping() {
-                if (!username || !typingChannel) return;
-                const tab = currentTab === 'private' && activePrivateChat ? 'private' : 'public';
-                const partner = tab === 'private' ? activePrivateChat : null;
-                typingChannel.send({
-                    type: 'broadcast',
-                    event: 'typing',
-                    payload: { username, tab, partner }
-                }).then(() => {}).catch(console.warn);
-            }
-            function stopTyping() {
-                if (!username || !typingChannel) return;
-                typingChannel.send({
-                    type: 'broadcast',
-                    event: 'stop_typing',
-                    payload: { username }
-                }).then(() => {}).catch(console.warn);
-            }
-            messageInput.addEventListener('input', () => {
-                if (messageInput.value.length > 0) startTyping();
-                else stopTyping();
-            });
-
-            function handleTypingBroadcast(payload) {
-                const { event, username: sender, tab, partner } = payload;
-                if (sender === username) return;
-
-                if (event === 'typing') {
-                    if (typingUsers.has(sender)) clearTimeout(typingUsers.get(sender).timeoutId);
-                    const timeoutId = setTimeout(() => {
-                        typingUsers.delete(sender);
-                        updateTypingIndicator();
-                    }, 3000);
-                    typingUsers.set(sender, { tab, partner, timeoutId });
-                } else if (event === 'stop_typing') {
-                    if (typingUsers.has(sender)) {
-                        clearTimeout(typingUsers.get(sender).timeoutId);
-                        typingUsers.delete(sender);
-                    }
-                }
-                updateTypingIndicator();
-            }
-
-            function updateTypingIndicator() {
-                const typersPublic = [];
-                const typersPrivate = {};
-                typingUsers.forEach((data, user) => {
-                    if (data.tab === 'public') typersPublic.push(user);
-                    else if (data.tab === 'private' && data.partner === username) typersPrivate[user] = true;
-                });
-
-                let text = '';
-                const dots = '<span class="typing-dots"><span></span><span></span><span></span></span>';
-                if (currentTab === 'public') {
-                    if (typersPublic.length === 1) text = `${typersPublic[0]} is typing... ${dots}`;
-                    else if (typersPublic.length > 1) text = `Several people are typing... ${dots}`;
-                } else if (currentTab === 'private' && activePrivateChat) {
-                    if (typersPrivate[activePrivateChat]) text = `${activePrivateChat} is typing... ${dots}`;
-                }
-                typingIndicator.innerHTML = text || '';
-            }
-
-            function setupTypingChannel() {
-                if (typingChannel) supabase.removeChannel(typingChannel);
-                typingChannel = supabase.channel('typing-broadcast', { config: { broadcast: { self: false } } });
-                typingChannel.on('broadcast', { event: 'typing' }, (payload) => handleTypingBroadcast(payload.payload));
-                typingChannel.on('broadcast', { event: 'stop_typing' }, (payload) => handleTypingBroadcast(payload.payload));
-                typingChannel.subscribe();
-            }
-
-            // Presence
-            function setupPresence() {
-                if (presenceChannel) return;
-                if (!username) return;
-                const presenceKey = `${username}::${clientId}`;
-                presenceChannel = supabase.channel('nitro-chat-presence', { config:{ presence:{ key:presenceKey } } });
-                presenceChannel
-                    .on('presence', { event:'sync' }, () => {
-                        const state = presenceChannel.presenceState();
-                        onlineUsers.clear();
-                        Object.keys(state).forEach(key => {
-                            const presences = state[key];
-                            if(presences && presences.length>0) {
-                                const p = presences[0];
-                                onlineUsers.set(key, { username: p.username||key.split('::')[0]||'Unknown', client_id:p.client_id||'', online_at:p.online_at||'' });
-                            }
-                        });
-                        updateSidebarUI();
-                        setConnection('connected');
-                    })
-                    .on('presence', { event:'join' }, ({key, newPresences}) => {
-                        if(newPresences && newPresences.length>0) {
-                            const p = newPresences[0];
-                            onlineUsers.set(key, { username: p.username||key.split('::')[0]||'Unknown', client_id:p.client_id||'', online_at:p.online_at||'' });
-                        }
-                        updateSidebarUI();
-                    })
-                    .on('presence', { event:'leave' }, ({key}) => { onlineUsers.delete(key); updateSidebarUI(); })
-                    .subscribe(async (status) => {
-                        if(status==='SUBSCRIBED') {
-                            await presenceChannel.track({ username:username, client_id:clientId, online_at:new Date().toISOString() });
-                            setConnection('connected');
-                        }
-                    });
-            }
-            function reTrackPresence() {
-                if (username && presenceChannel) {
-                    presenceChannel.track({ username:username, client_id:clientId, online_at:new Date().toISOString() }).catch(console.warn);
-                }
-            }
-
             function subscribeToRealtime() {
                 if (realtimeChannel) supabase.removeChannel(realtimeChannel);
                 realtimeChannel = supabase.channel('public-msgs')
@@ -1476,8 +1588,9 @@
                 subscribeToRealtime();
                 if(username) { setupPresence(); subscribeToPrivateRequests(); await loadPendingRequests(); }
                 await loadMessages();
-                loadReactions();
-                subscribeToReactions();
+                loadReactions('message_reactions', false);
+                loadReactions('private_message_reactions', true);
+                subscribeReactions();
                 setTimeout(() => refreshBtn.classList.remove('spinning'), 700);
             }
 
@@ -1559,8 +1672,9 @@
                 setupPresence();
                 subscribeToPrivateRequests();
                 loadPendingRequests();
-                loadReactions();
-                subscribeToReactions();
+                loadReactions('message_reactions', false);
+                loadReactions('private_message_reactions', true);
+                subscribeReactions();
             });
             nameInput.addEventListener('keypress', (e) => { if(e.key==='Enter') nameSubmitBtn.click(); });
             changeNameBtn.addEventListener('click', () => {
@@ -1604,8 +1718,9 @@
                     setupPresence();
                     subscribeToPrivateRequests();
                     loadPendingRequests();
-                    loadReactions();
-                    subscribeToReactions();
+                    loadReactions('message_reactions', false);
+                    loadReactions('private_message_reactions', true);
+                    subscribeReactions();
                     setupTypingChannel();
                 } else {
                     nameOverlay.classList.remove('hidden'); nameInput.focus();
