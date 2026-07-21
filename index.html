@@ -145,7 +145,7 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             text-transform: uppercase;
         }
-        .chat-header-bar .header-right { display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; }
+        .chat-header-bar .header-right { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
         .badge-pill {
             display: flex; align-items: center; gap: 3px; padding: 3px 8px; border-radius: 20px;
             font-size: 0.68rem; font-weight: 500; border: 1px solid rgba(255,255,255,0.2);
@@ -420,6 +420,13 @@
             .chat-header-bar {
                 padding-left: 52px;
             }
+            .chat-header-bar .header-title {
+                font-size: 0.8rem;
+            }
+            .badge-pill {
+                font-size: 0.6rem;
+                padding: 2px 6px;
+            }
             .typing-indicator {
                 font-size: 1.5rem;
             }
@@ -578,7 +585,7 @@
             let avatarCache = {};
             let activePrivateChat = null;
             let currentTab = 'public';
-            let onlineUsers = new Map();
+            let onlineUsers = new Map();  // now holds { username, typing_in, partner }
             let pendingPrivateRequests = new Map();
             let acceptedPrivateChats = new Set(JSON.parse(localStorage.getItem('nitro_accepted_chats') || '[]'));
             let knownMessageIds = new Set();
@@ -590,10 +597,6 @@
             let messageReactions = {};
             let privateMessageReactions = {};
             const EMOJIS = ['❤️','😂','😮','😢','😡'];
-
-            // Typing broadcast state
-            const typingUsers = new Map(); // key: username, value: { tab, partner, timeoutId }
-            let typingChannel = null;
 
             const publicContainer = document.getElementById('publicMessagesContainer');
             const privateContainer = document.getElementById('privateMessagesContainer');
@@ -1061,69 +1064,30 @@
                 }
             }
 
-            // ── TYPING via Broadcast Channel ──
-            function startTyping() {
-                if (!username || !typingChannel) return;
-                const tab = currentTab === 'private' && activePrivateChat ? 'private' : 'public';
-                const partner = tab === 'private' ? activePrivateChat : null;
-                typingChannel.send({
-                    type: 'broadcast',
-                    event: 'typing',
-                    payload: { username, tab, partner }
-                }).then(() => {}).catch(console.warn);
-            }
-
-            function stopTyping() {
-                if (!username || !typingChannel) return;
-                typingChannel.send({
-                    type: 'broadcast',
-                    event: 'stop_typing',
-                    payload: { username }
-                }).then(() => {}).catch(console.warn);
-            }
-
-            messageInput.addEventListener('input', () => {
-                if (messageInput.value.length > 0) {
-                    startTyping();
+            // ── Typing: Presence-based ──
+            function setTypingStatus(isTyping) {
+                if (!username || !presenceChannel) return;
+                const data = { username, client_id: clientId, online_at: new Date().toISOString() };
+                if (isTyping) {
+                    data.typing_in = currentTab === 'private' && activePrivateChat ? 'private' : 'public';
+                    data.partner = activePrivateChat || null;
                 } else {
-                    stopTyping();
+                    data.typing_in = null;
+                    data.partner = null;
                 }
-            });
-
-            // Handle incoming typing broadcasts
-            function handleTypingBroadcast(payload) {
-                const { event, username: sender, tab, partner } = payload;
-                if (sender === username) return;
-
-                if (event === 'typing') {
-                    // Clear previous timeout for this user
-                    if (typingUsers.has(sender)) {
-                        clearTimeout(typingUsers.get(sender).timeoutId);
-                    }
-                    // Set a new timeout to remove the typing indicator after 3 seconds if no new updates
-                    const timeoutId = setTimeout(() => {
-                        typingUsers.delete(sender);
-                        updateTypingIndicator();
-                    }, 3000);
-                    typingUsers.set(sender, { tab, partner, timeoutId });
-                } else if (event === 'stop_typing') {
-                    if (typingUsers.has(sender)) {
-                        clearTimeout(typingUsers.get(sender).timeoutId);
-                        typingUsers.delete(sender);
-                    }
-                }
-                updateTypingIndicator();
+                presenceChannel.track(data).catch(console.warn);
             }
+            messageInput.addEventListener('input', () => {
+                setTypingStatus(messageInput.value.length > 0);
+            });
 
             function updateTypingIndicator() {
                 const typersPublic = [];
                 const typersPrivate = {};
-                typingUsers.forEach((data, user) => {
-                    if (data.tab === 'public') {
-                        typersPublic.push(user);
-                    } else if (data.tab === 'private' && data.partner === username) {
-                        typersPrivate[user] = true;
-                    }
+                onlineUsers.forEach((user) => {
+                    if (user.username === username) return;
+                    if (user.typing_in === 'public') typersPublic.push(user.username);
+                    if (user.typing_in === 'private' && user.partner === username) typersPrivate[user.username] = true;
                 });
 
                 let text = '';
@@ -1139,45 +1103,35 @@
                 typingIndicator.innerHTML = text || '';
             }
 
-            function setupTypingChannel() {
-                if (typingChannel) supabase.removeChannel(typingChannel);
-                typingChannel = supabase.channel('typing-broadcast', {
-                    config: { broadcast: { self: false } }
-                });
-                typingChannel.on('broadcast', { event: 'typing' }, (payload) => {
-                    handleTypingBroadcast(payload.payload);
-                });
-                typingChannel.on('broadcast', { event: 'stop_typing' }, (payload) => {
-                    handleTypingBroadcast(payload.payload);
-                });
-                typingChannel.subscribe();
-            }
-
-            // ── Presence (unchanged) ──
             function setupPresence() {
-                if (presenceChannel) return;
+                if (presenceChannel) return; // already created
                 if (!username) return;
                 const key = `${username}::${clientId}`;
                 presenceChannel = supabase.channel('presence', { config: { presence: { key } } });
+
                 presenceChannel.on('presence', { event:'sync' }, () => {
                     const state = presenceChannel.presenceState();
                     onlineUsers.clear();
                     Object.keys(state).forEach(k => {
                         const p = state[k][0];
-                        if (p) onlineUsers.set(k, { username: p.username });
+                        if (p) onlineUsers.set(k, { username: p.username, typing_in: p.typing_in||null, partner: p.partner||null });
                     });
                     updateSidebar();
+                    updateTypingIndicator();
                     setConnection('connected');
                 });
+
                 presenceChannel.on('presence', { event:'join' }, ({ key, newPresences }) => {
                     const p = newPresences[0];
-                    if (p) onlineUsers.set(key, { username: p.username });
-                    updateSidebar();
+                    if (p) onlineUsers.set(key, { username: p.username, typing_in: p.typing_in||null, partner: p.partner||null });
+                    updateSidebar(); updateTypingIndicator();
                 });
+
                 presenceChannel.on('presence', { event:'leave' }, ({ key }) => {
                     onlineUsers.delete(key);
-                    updateSidebar();
+                    updateSidebar(); updateTypingIndicator();
                 });
+
                 presenceChannel.subscribe(async status => {
                     if (status === 'SUBSCRIBED') await presenceChannel.track({ username, client_id: clientId, online_at: new Date().toISOString() });
                 });
@@ -1185,7 +1139,12 @@
 
             function reTrackPresence() {
                 if (username && presenceChannel) {
-                    presenceChannel.track({ username, client_id: clientId, online_at: new Date().toISOString() }).catch(console.warn);
+                    const data = { username, client_id: clientId, online_at: new Date().toISOString() };
+                    if (messageInput.value.length > 0) {
+                        data.typing_in = currentTab === 'private' && activePrivateChat ? 'private' : 'public';
+                        data.partner = activePrivateChat || null;
+                    }
+                    presenceChannel.track(data).catch(console.warn);
                 }
             }
 
@@ -1205,8 +1164,8 @@
                     messageInput.placeholder = 'Type a message...';
                 }
                 updateTypingIndicator();
-                // Re-send typing status if input not empty
-                if (messageInput.value.length > 0) startTyping();
+                // resend typing status if input not empty
+                if (messageInput.value.length > 0) setTypingStatus(true);
             }
             chatTabs.addEventListener('click', e => {
                 const tab = e.target.closest('.chat-tab');
@@ -1231,6 +1190,7 @@
                 }
                 updateSidebar();
                 updateTypingIndicator();
+                if (messageInput.value.length > 0) setTypingStatus(true);
             }
             cancelPrivateBtn.addEventListener('click', () => setActivePrivateChat(null));
 
@@ -1402,7 +1362,7 @@
                     messageInput.value = '';
                     setReplyingTo(null);
                     clearAttachedImage();
-                    stopTyping();
+                    setTypingStatus(false);
                 } catch (err) { showError('Send failed: ' + err.message); }
                 finally { sendBtn.disabled = false; messageInput.focus(); }
             }
@@ -1534,8 +1494,6 @@
                 userPill.style.display = 'flex'; inputAreaBar.style.display = 'flex';
                 nameOverlay.classList.add('hidden');
                 setReplyingTo(null); setActivePrivateChat(null); switchTab('public'); updateSidebar();
-                // Start typing broadcast channel
-                setupTypingChannel();
             }
             nameSubmitBtn.addEventListener('click', async () => {
                 const n = nameInput.value.trim(); if (!n) return;
@@ -1564,7 +1522,6 @@
                     loadReactions('message_reactions', false);
                     loadReactions('private_message_reactions', true);
                     subscribeReactions();
-                    setupTypingChannel(); // Start typing channel
                 } else {
                     nameOverlay.classList.remove('hidden'); nameInput.focus();
                     subscribeRealtime();
